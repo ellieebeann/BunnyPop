@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4244670979440150646}
   - component: {fileID: 5315923958354800710}
   - component: {fileID: 8132246634441697406}
-  - component: {fileID: 2585670250571664657}
+  - component: {fileID: 7972912318197910133}
   m_Layer: 0
   m_Name: Boulder01_LOD0
   m_TagString: Untagged
@@ -91,8 +91,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2585670250571664657
-MeshCollider:
+--- !u!65 &7972912318197910133
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -109,10 +109,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -6627231211071601237, guid: 15a3f819c1f8b144798bc7f55059f6e7, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.43, y: 6.7832766, z: 4.83}
+  m_Center: {x: -0.28, y: 2.8398156, z: -0.97}
 --- !u!1 &3457475533365242694
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,7 +123,7 @@ GameObject:
   - component: {fileID: 6178928243917358738}
   - component: {fileID: 7436676185465778716}
   - component: {fileID: 9159473336177692638}
-  - component: {fileID: 8811172582489489051}
+  - component: {fileID: 1022660616011029944}
   m_Layer: 0
   m_Name: Boulder01_LOD2
   m_TagString: Untagged
@@ -204,8 +203,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8811172582489489051
-MeshCollider:
+--- !u!65 &1022660616011029944
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -222,10 +221,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 2831765479908930634, guid: 15a3f819c1f8b144798bc7f55059f6e7, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.43, y: 6.7480373, z: 4.83}
+  m_Center: {x: -0.28, y: 2.822196, z: -0.97}
 --- !u!1 &4975828160402647070
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,7 +234,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5640303291823764132}
   - component: {fileID: 584480987624342997}
-  - component: {fileID: 4847418540510799704}
   m_Layer: 0
   m_Name: Boulder01
   m_TagString: Untagged
@@ -290,28 +287,6 @@ LODGroup:
     - renderer: {fileID: 9159473336177692638}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
---- !u!64 &4847418540510799704
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4975828160402647070}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &7358876067819349684
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,7 +298,7 @@ GameObject:
   - component: {fileID: 4734248483934496359}
   - component: {fileID: 4359471395850867619}
   - component: {fileID: 7276646675069412641}
-  - component: {fileID: 6870408586166294433}
+  - component: {fileID: 5953952568435352033}
   m_Layer: 0
   m_Name: Boulder01_LOD1
   m_TagString: Untagged
@@ -403,8 +378,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &6870408586166294433
-MeshCollider:
+--- !u!65 &5953952568435352033
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -421,7 +396,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 7862168904658579992, guid: 15a3f819c1f8b144798bc7f55059f6e7, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.43, y: 6.7832766, z: 4.83}
+  m_Center: {x: -0.28, y: 2.8398156, z: -0.97}

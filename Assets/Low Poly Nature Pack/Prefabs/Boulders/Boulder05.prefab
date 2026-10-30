@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3940512695570865439}
   - component: {fileID: 2521288988634089188}
   - component: {fileID: 7680209904335964335}
-  - component: {fileID: 2601505130284232575}
+  - component: {fileID: 3065485728618239314}
   m_Layer: 0
   m_Name: Boulder05_LOD1
   m_TagString: Untagged
@@ -91,8 +91,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2601505130284232575
-MeshCollider:
+--- !u!65 &3065485728618239314
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -109,10 +109,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -6262548951399922602, guid: b706ce70a080c464d84c5f7ea8a6a034, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.8, y: 6.32, z: 3.76}
+  m_Center: {x: 0, y: 3.55, z: -0.00000011920929}
 --- !u!1 &6288002990926791570
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,7 +123,7 @@ GameObject:
   - component: {fileID: 4584991247374364663}
   - component: {fileID: 8640266827529661547}
   - component: {fileID: 2755633523091139337}
-  - component: {fileID: 5525709976087098726}
+  - component: {fileID: 868934492912344655}
   m_Layer: 0
   m_Name: Boulder05_LOD2
   m_TagString: Untagged
@@ -204,8 +203,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5525709976087098726
-MeshCollider:
+--- !u!65 &868934492912344655
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -222,10 +221,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3976694903078219633, guid: b706ce70a080c464d84c5f7ea8a6a034, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.8, y: 6.32, z: 3.76}
+  m_Center: {x: 0, y: 3.55, z: -0.00000011920929}
 --- !u!1 &6567961147423415137
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,7 +235,7 @@ GameObject:
   - component: {fileID: 8918104938783028421}
   - component: {fileID: 5503791363652383646}
   - component: {fileID: 8545243331330185705}
-  - component: {fileID: 3684375932147221549}
+  - component: {fileID: 5080205081247729560}
   m_Layer: 0
   m_Name: Boulder05_LOD0
   m_TagString: Untagged
@@ -317,8 +315,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &3684375932147221549
-MeshCollider:
+--- !u!65 &5080205081247729560
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -335,10 +333,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -6731964616304791678, guid: b706ce70a080c464d84c5f7ea8a6a034, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 4.8, y: 6.32, z: 3.76}
+  m_Center: {x: 0, y: 3.55, z: -0.00000011920929}
 --- !u!1 &8018004791486870530
 GameObject:
   m_ObjectHideFlags: 0
@@ -349,7 +346,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7209836723373878968}
   - component: {fileID: 2473711933393115593}
-  - component: {fileID: 4113025398456353582}
   m_Layer: 0
   m_Name: Boulder05
   m_TagString: Untagged
@@ -403,25 +399,3 @@ LODGroup:
     - renderer: {fileID: 2755633523091139337}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
---- !u!64 &4113025398456353582
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8018004791486870530}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}

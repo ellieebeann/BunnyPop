@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6478987053052553118}
   - component: {fileID: 3959269876493559819}
   - component: {fileID: 1116038102689450177}
-  - component: {fileID: 8586713827066312617}
+  - component: {fileID: 2919008740821817281}
   m_Layer: 0
   m_Name: Boulder02_LOD2
   m_TagString: Untagged
@@ -91,8 +91,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8586713827066312617
-MeshCollider:
+--- !u!65 &2919008740821817281
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -109,10 +109,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3541969051288374341, guid: 42a6cc922ef051c43b2e83fc1a4aee55, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 3.87, y: 5.65, z: 4.05}
+  m_Center: {x: -0.23, y: 3.363686, z: -1.51}
 --- !u!1 &4078554720209696595
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +122,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3734116603234037225}
   - component: {fileID: 8469055303401970328}
-  - component: {fileID: 6535787831677970093}
   m_Layer: 0
   m_Name: Boulder02
   m_TagString: Untagged
@@ -177,28 +175,6 @@ LODGroup:
     - renderer: {fileID: 1116038102689450177}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
---- !u!64 &6535787831677970093
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4078554720209696595}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &5311548794315636870
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,7 +186,7 @@ GameObject:
   - component: {fileID: 3630876471968329217}
   - component: {fileID: 135347320659829097}
   - component: {fileID: 2703502605698586373}
-  - component: {fileID: 2349728139165830371}
+  - component: {fileID: 2752206740168803233}
   m_Layer: 0
   m_Name: Boulder02_LOD0
   m_TagString: Untagged
@@ -290,8 +266,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2349728139165830371
-MeshCollider:
+--- !u!65 &2752206740168803233
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -308,10 +284,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -1110284606574928258, guid: 42a6cc922ef051c43b2e83fc1a4aee55, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 3.87, y: 5.65, z: 4.05}
+  m_Center: {x: -0.23, y: 3.363686, z: -1.51}
 --- !u!1 &6687999072952563947
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,7 +298,7 @@ GameObject:
   - component: {fileID: 4283559110251695248}
   - component: {fileID: 1250335424607392625}
   - component: {fileID: 1888756613866712606}
-  - component: {fileID: 5263597195793548097}
+  - component: {fileID: 7104816773873037770}
   m_Layer: 0
   m_Name: Boulder02_LOD1
   m_TagString: Untagged
@@ -403,8 +378,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5263597195793548097
-MeshCollider:
+--- !u!65 &7104816773873037770
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -421,7 +396,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -7128355371978292966, guid: 42a6cc922ef051c43b2e83fc1a4aee55, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 3.87, y: 5.65, z: 4.05}
+  m_Center: {x: -0.23, y: 3.363686, z: -1.51}
