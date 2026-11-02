@@ -94,8 +94,6 @@ public class SlimeAI : MonoBehaviour
     {
         if (animator == null) return;
 
-        // Random pick mula 0 hanggang 2:
-        // 0 = Dance, 1 = Jump, 2 = Bagong Roam Destination
         int randomAction = Random.Range(0, 3);
 
         switch (randomAction)

@@ -8,14 +8,14 @@ public class BunnyController : MonoBehaviour
     private Animator animator;
 
     [Header("Movement")]
-    public float walkSpeed = 10f;
-    public float sprintSpeed = 20f;
-    public float crouchSpeed = 5f;
-    public float rotationSpeed = 10f;
+    public float walkSpeed = 14f;
+    public float sprintSpeed = 37f;
+    public float crouchSpeed = 2.5f;
+    public float rotationSpeed = 1.1f;
 
     [Header("Jump")]
-    public float jumpHeight = 2f;
-    public float gravity = -20f;
+    public float jumpHeight = 20f;
+    public float gravity = -271.7f;
 
     [Header("Crouch")]
     public float standingHeight = 2f;
@@ -24,14 +24,11 @@ public class BunnyController : MonoBehaviour
     [Header("Camera Control")]
     public float cameraSensitivity = 3f;
     public float cameraDistance = 5f;
-    public float minVerticalAngle = -10f;
-    public float maxVerticalAngle = 85f; 
-    private float cameraYaw = 0f;
-    private float cameraPitch = 20f;
+    public float minVerticalAngle = -20f;
+    public float maxVerticalAngle = 60f;
 
     private Vector3 velocity;
     private bool isDead = false;
-
 
     void Start()
     {
@@ -47,13 +44,6 @@ public class BunnyController : MonoBehaviour
             cameraTransform = Camera.main.transform;
         }
 
-        if (cameraTransform != null)
-        {
-            Vector3 angles = cameraTransform.eulerAngles;
-            cameraYaw = angles.y;
-            cameraPitch = angles.x;
-        }
-
         controller.height = standingHeight;
         controller.center = new Vector3(0, standingHeight / 2f, 0);
 
@@ -65,35 +55,13 @@ public class BunnyController : MonoBehaviour
     {
         if (isDead) return;
 
-        HandleCameraControl();
+        HandleCursorToggle();
         Move();
         HandleCombat();
     }
 
-    void HandleCameraControl()
+    void HandleCursorToggle()
     {
-        if (Input.GetMouseButton(1))
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            // Horizontal Movement = Circular 360 rotation around player
-            cameraYaw += Input.GetAxis("Mouse X") * cameraSensitivity;
-
-            // Vertical Movement = Tilt up for Top-Down View or Down for Low Angle View
-            cameraPitch -= Input.GetAxis("Mouse Y") * cameraSensitivity;
-            cameraPitch = Mathf.Clamp(cameraPitch, minVerticalAngle, maxVerticalAngle);
-
-            if (cameraTransform != null)
-            {
-                Quaternion rotation = Quaternion.Euler(cameraPitch, cameraYaw, 0f);
-                Vector3 targetPosition = transform.position + Vector3.up * 1.5f;
-
-                cameraTransform.position = targetPosition - (rotation * Vector3.forward * cameraDistance);
-                cameraTransform.LookAt(targetPosition);
-            }
-        }
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (Cursor.lockState == CursorLockMode.Locked)
@@ -159,21 +127,15 @@ public class BunnyController : MonoBehaviour
             camForward.Normalize();
             camRight.Normalize();
 
-            moveDirection =
-                (camForward * vertical + camRight * horizontal).normalized;
+            moveDirection = (camForward * vertical + camRight * horizontal).normalized;
         }
         else
         {
-            moveDirection =
-                (transform.forward * vertical +
-                 transform.right * horizontal).normalized;
+            moveDirection = (transform.forward * vertical + transform.right * horizontal).normalized;
         }
 
         bool IsMoving = moveDirection.magnitude > 0.1f;
-        bool IsSprinting =
-            IsMoving &&
-            Input.GetKey(KeyCode.LeftShift) &&
-            !isCrouching;
+        bool IsSprinting = IsMoving && Input.GetKey(KeyCode.LeftShift) && !isCrouching;
 
         if (animator != null)
         {
@@ -183,8 +145,7 @@ public class BunnyController : MonoBehaviour
 
         if (IsMoving)
         {
-            Quaternion targetRotation =
-                Quaternion.LookRotation(moveDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
 
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
@@ -206,9 +167,7 @@ public class BunnyController : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && grounded && !isCrouching)
         {
-            velocity.y = Mathf.Sqrt(
-                jumpHeight * -2f * gravity
-            );
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
         velocity.y += gravity * Time.deltaTime;
@@ -240,6 +199,7 @@ public class BunnyController : MonoBehaviour
             TriggerDeath();
         }
     }
+
     public void TriggerDeath()
     {
         isDead = true;
