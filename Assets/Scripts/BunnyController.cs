@@ -1,212 +1,173 @@
 using UnityEngine;
 
+[RequireComponent(typeof(CharacterController), typeof(BunnyAttack))]
 public class BunnyController : MonoBehaviour
 {
     public CharacterController controller;
     public Transform cameraTransform;
-
-    private Animator animator;
-
-    [Header("Movement")]
-    public float walkSpeed = 14f;
-    public float sprintSpeed = 37f;
-    public float crouchSpeed = 2.5f;
-    public float rotationSpeed = 1.1f;
-
+    [Header("Movement (world units)")]
+    public float walkSpeed = 14f, sprintSpeed = 26f, crouchSpeed = 7f;
+    public float rotationSpeed = 12f, acceleration = 60f;
     [Header("Jump")]
-    public float jumpHeight = 20f;
-    public float gravity = -271.7f;
+    public float jumpHeight = 8f, gravity = -60f;
+    public float coyoteTime = 0.12f, jumpBuffer = 0.12f;
+    [Header("Grounding (world units)")]
+    public LayerMask groundLayers = ~0;
+    public float groundProbeDistance = 0.75f, groundSnapDistance = 1.2f;
+    public float groundStickSpeed = 8f, airborneDelay = 0.08f;
+    public bool IsGrounded { get; private set; }
+    [Header("Crouch (local units)")]
+    public float standingHeight = 2.69f, crouchingHeight = 1.5f;
+    public LayerMask obstructionLayers = ~0;
+    public bool IsDead { get; private set; }
+    private Animator animator;
+    private BunnyAttack attack;
+    private Vector3 planarVelocity, standingCenter;
+    private float verticalSpeed;
+    private float lastGrounded = float.NegativeInfinity, lastJump = float.NegativeInfinity;
+    private bool crouched;
+    private bool jumpInProgress;
+    private readonly Collider[] clearance = new Collider[32];
+    private readonly RaycastHit[] groundHits = new RaycastHit[32];
 
-    [Header("Crouch")]
-    public float standingHeight = 2f;
-    public float crouchingHeight = 1f;
-
-    [Header("Camera Control")]
-    public float cameraSensitivity = 3f;
-    public float cameraDistance = 5f;
-    public float minVerticalAngle = -20f;
-    public float maxVerticalAngle = 60f;
-
-    private Vector3 velocity;
-    private bool isDead = false;
+    void Awake()
+    {
+        if (controller == null) controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        attack = GetComponent<BunnyAttack>();
+        standingCenter = controller.center;
+    }
 
     void Start()
     {
-        animator = GetComponent<Animator>();
-
-        if (controller == null)
-        {
-            controller = GetComponent<CharacterController>();
-        }
-
-        if (cameraTransform == null && Camera.main != null)
-        {
-            cameraTransform = Camera.main.transform;
-        }
-
-        controller.height = standingHeight;
-        controller.center = new Vector3(0, standingHeight / 2f, 0);
-
+        if (cameraTransform == null && Camera.main != null) cameraTransform = Camera.main.transform;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
-        if (isDead) return;
-
-        HandleCursorToggle();
-        Move();
-        HandleCombat();
-    }
-
-    void HandleCursorToggle()
-    {
+        if (IsDead || Time.timeScale == 0f) return;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Cursor.lockState == CursorLockMode.Locked)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
+            bool locked = Cursor.lockState == CursorLockMode.Locked;
+            Cursor.lockState = locked ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = locked;
         }
+        bool acceptInput = Cursor.lockState == CursorLockMode.Locked;
+        Move(acceptInput ? new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) : Vector2.zero,
+            acceptInput && Input.GetKey(KeyCode.LeftShift), acceptInput && Input.GetKey(KeyCode.LeftControl),
+            acceptInput && Input.GetButtonDown("Jump"));
+        if (acceptInput && (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) attack.TryAttack(false);
+        if (acceptInput && Input.GetKeyDown(KeyCode.Q)) attack.TryAttack(true);
     }
 
-    void Move()
+    void Move(Vector2 movementInput, bool sprintRequested, bool crouchRequested, bool jumpRequested)
     {
-        bool grounded = controller.isGrounded;
-
-        if (animator != null)
+        bool groundedBeforeMove = verticalSpeed <= 0f && ProbeGround(groundProbeDistance, out _);
+        if (groundedBeforeMove)
         {
-            animator.SetBool("IsJumping", !grounded);
+            lastGrounded = Time.time;
+            verticalSpeed = -groundStickSpeed;
+            jumpInProgress = false;
         }
-
-        if (grounded && velocity.y < 0)
+        if (jumpRequested) lastJump = Time.time;
+        bool wantsCrouch = crouchRequested;
+        crouched = wantsCrouch || (crouched && !CanStand());
+        float height = Mathf.MoveTowards(controller.height, crouched ? crouchingHeight : standingHeight, 5f * Time.deltaTime);
+        if (Mathf.Abs(controller.height - height) > 0.0001f)
         {
-            velocity.y = -2f;
+            controller.height = height;
+            // Avoid rebuilding the controller on every grounded frame.
+            controller.center = standingCenter + Vector3.up * ((height - standingHeight) * 0.5f);
         }
-
-        bool isCrouching = Input.GetKey(KeyCode.LeftControl);
-        float targetHeight = isCrouching ? crouchingHeight : standingHeight;
-
-        controller.height = Mathf.Lerp(
-            controller.height,
-            targetHeight,
-            10f * Time.deltaTime
-        );
-
-        controller.center = new Vector3(
-            0,
-            controller.height / 2f,
-            0
-        );
-
-        if (animator != null)
+        Vector2 input = Vector2.ClampMagnitude(movementInput, 1f);
+        float yaw = cameraTransform != null ? cameraTransform.eulerAngles.y : transform.eulerAngles.y;
+        Vector3 direction = Quaternion.Euler(0f, yaw, 0f) * new Vector3(input.x, 0f, input.y);
+        bool sprinting = !crouched && sprintRequested && input.sqrMagnitude > 0f;
+        float speed = crouched ? crouchSpeed : sprinting ? sprintSpeed : walkSpeed;
+        planarVelocity = Vector3.MoveTowards(planarVelocity, direction * speed, acceleration * Time.deltaTime);
+        if (direction.sqrMagnitude > 0.001f && !attack.IsAttacking)
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 1f - Mathf.Exp(-rotationSpeed * Time.deltaTime));
+        if (!crouched && Time.time - lastGrounded <= coyoteTime && Time.time - lastJump <= jumpBuffer)
         {
-            animator.SetBool("IsCrouching", isCrouching);
+            verticalSpeed = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            lastJump = lastGrounded = float.NegativeInfinity;
+            jumpInProgress = true;
         }
-
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 moveDirection = Vector3.zero;
-
-        if (cameraTransform != null)
+        verticalSpeed += gravity * Time.deltaTime;
+        CollisionFlags flags = controller.Move((planarVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
+        if ((flags & CollisionFlags.Above) != 0 && verticalSpeed > 0f) verticalSpeed = 0f;
+        if (groundedBeforeMove && !jumpInProgress && verticalSpeed <= 0f
+            && ProbeGround(groundSnapDistance, out float gap) && gap > 0.01f)
+            controller.Move(Vector3.down * gap);
+        IsGrounded = verticalSpeed <= 0f && ProbeGround(groundProbeDistance, out _);
+        if (IsGrounded)
         {
-            Vector3 camForward = cameraTransform.forward;
-            Vector3 camRight = cameraTransform.right;
-
-            camForward.y = 0f;
-            camRight.y = 0f;
-
-            camForward.Normalize();
-            camRight.Normalize();
-
-            moveDirection = (camForward * vertical + camRight * horizontal).normalized;
+            lastGrounded = Time.time;
+            jumpInProgress = false;
+            verticalSpeed = -groundStickSpeed;
         }
-        else
-        {
-            moveDirection = (transform.forward * vertical + transform.right * horizontal).normalized;
-        }
-
-        bool IsMoving = moveDirection.magnitude > 0.1f;
-        bool IsSprinting = IsMoving && Input.GetKey(KeyCode.LeftShift) && !isCrouching;
-
-        if (animator != null)
-        {
-            animator.SetBool("IsMoving", IsMoving);
-            animator.SetBool("IsSprinting", IsSprinting);
-        }
-
-        if (IsMoving)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
-        }
-
-        float currentSpeed = walkSpeed;
-
-        if (isCrouching)
-        {
-            currentSpeed = crouchSpeed;
-        }
-        else if (IsSprinting)
-        {
-            currentSpeed = sprintSpeed;
-        }
-
-        if (Input.GetButtonDown("Jump") && grounded && !isCrouching)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-
-        velocity.y += gravity * Time.deltaTime;
-
-        Vector3 finalMove = moveDirection * currentSpeed;
-        finalMove.y = velocity.y;
-
-        controller.Move(finalMove * Time.deltaTime);
-    }
-
-    void HandleCombat()
-    {
         if (animator == null) return;
+        animator.SetBool("IsMoving", planarVelocity.sqrMagnitude > 0.1f);
+        animator.SetBool("IsSprinting", sprinting);
+        animator.SetBool("IsCrouching", crouched);
+        animator.SetBool("IsJumping", jumpInProgress || (!IsGrounded && Time.time - lastGrounded > airborneDelay));
+    }
 
-        if (Input.GetMouseButtonDown(0))
+    bool ProbeGround(float distance, out float gap)
+    {
+        Vector3 scale = transform.lossyScale;
+        float fullRadius = controller.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+        float halfHeight = Mathf.Max(fullRadius, controller.height * Mathf.Abs(scale.y) * 0.5f);
+        float radius = fullRadius * 0.9f;
+        const float lift = 0.2f;
+        Vector3 feet = transform.TransformPoint(controller.center) - Vector3.up * halfHeight;
+        float offset = fullRadius - radius + lift;
+        Vector3 origin = feet + Vector3.up * (fullRadius + lift);
+        int count = Physics.SphereCastNonAlloc(origin, radius, Vector3.down, groundHits,
+            offset + Mathf.Max(0f, distance), groundLayers, QueryTriggerInteraction.Ignore);
+        gap = float.PositiveInfinity;
+        if (count == groundHits.Length) return false;
+        float minimumUp = Mathf.Cos(controller.slopeLimit * Mathf.Deg2Rad);
+        for (int i = 0; i < count; i++)
         {
-            animator.SetTrigger("Punch");
+            var hit = groundHits[i];
+            if (hit.transform.IsChildOf(transform) || hit.collider.GetComponentInParent<EnemyHealth>() != null) continue;
+            // Initial overlaps have no reliable support normal (a wall can report up).
+            if (hit.distance <= 0.0001f) continue;
+            if (Vector3.Dot(hit.normal, Vector3.up) < minimumUp) continue;
+            gap = Mathf.Min(gap, Mathf.Max(0f, hit.distance - offset));
         }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            animator.SetTrigger("AttackWeapon");
-        }
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            animator.SetTrigger("Hit");
-        }
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            TriggerDeath();
-        }
+        return gap <= distance;
+    }
+
+    bool CanStand()
+    {
+        float scale = Mathf.Abs(transform.lossyScale.y);
+        float radius = controller.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z)) * 0.95f;
+        Vector3 center = transform.TransformPoint(standingCenter);
+        Vector3 top = center + Vector3.up * Mathf.Max(0f, standingHeight * scale * 0.5f - radius);
+        Vector3 bottom = top - Vector3.up * Mathf.Max(0f, (standingHeight - crouchingHeight) * scale - radius);
+        int count = Physics.OverlapCapsuleNonAlloc(bottom, top, radius, clearance, obstructionLayers, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < count; i++)
+            if (!clearance[i].transform.IsChildOf(transform)) return false;
+        return count < clearance.Length;
     }
 
     public void TriggerDeath()
     {
-        isDead = true;
-
-        if (animator != null)
-        {
-            animator.SetBool("IsDead", true);
-        }
+        if (IsDead) return;
+        IsDead = true;
+        planarVelocity = Vector3.zero;
+        attack.CancelAttack();
+        if (animator == null) return;
+        animator.ResetTrigger("Punch");
+        animator.ResetTrigger("AttackWeapon");
+        animator.ResetTrigger("Hit");
+        animator.SetBool("IsMoving", false);
+        animator.SetBool("IsSprinting", false);
+        animator.SetBool("IsJumping", false);
+        animator.SetBool("IsDead", true);
     }
 }

@@ -1,92 +1,45 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BunnyHealth : MonoBehaviour
 {
     public GameObject LosePanel;
-
-    public int maxHealth = 100;
-    public int currentHealth;
-
+    public int maxHealth = 100, currentHealth;
     public Slider healthBar;
-
     public AudioClip gameOverSound;
-
-    private BunnyController bunnyController;
-
+    public float damageGracePeriod = 0.6f, deathPresentationDelay = 1.5f;
+    public bool IsDead { get; private set; }
+    private float nextDamage;
+    void Awake() { currentHealth = maxHealth; }
     void Start()
     {
-        Time.timeScale = 1f;
-
-        currentHealth = maxHealth;
-
-        if (healthBar != null)
-        {
-            healthBar.maxValue = maxHealth;
-            healthBar.value = currentHealth;
-        }
-
-        bunnyController = GetComponent<BunnyController>();
+        if (LosePanel != null) LosePanel.SetActive(false);
+        if (healthBar != null) { healthBar.maxValue = maxHealth; healthBar.value = currentHealth; }
     }
-
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
-
-        currentHealth = Mathf.Clamp(
-            currentHealth,
-            0,
-            maxHealth
-        );
-
-        if (healthBar != null)
+        if (IsDead || damage <= 0 || Time.timeScale == 0f || Time.time < nextDamage) return;
+        nextDamage = Time.time + damageGracePeriod;
+        currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);
+        if (healthBar != null) healthBar.value = currentHealth;
+        if (currentHealth > 0)
         {
-            healthBar.value = currentHealth;
+            var animator = GetComponent<Animator>();
+            if (animator != null) animator.SetTrigger("Hit");
+            return;
         }
-
-        Debug.Log("Health: " + currentHealth);
-        Debug.Log("TAKE DAMAGE: " + damage);
-
-        if (currentHealth <= 0)
-        {
-            Debug.Log("Player Died!");
-            GameOver();
-        }
+        IsDead = true;
+        GetComponent<BunnyController>()?.TriggerDeath();
+        StartCoroutine(GameOver());
     }
-
-    public int GetHealth()
+    public int GetHealth() { return currentHealth; }
+    IEnumerator GameOver()
     {
-        return currentHealth;
-    }
-
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (hit.gameObject.CompareTag("Enemy"))
-        {
-            TakeDamage(3);
-        }
-    }
-
-    private void GameOver()
-    {
-        if (bunnyController != null)
-        {
-            bunnyController.TriggerDeath();
-        }
-
-        if (LosePanel != null)
-        {
-            LosePanel.SetActive(true);
-        }
-
-        if (gameOverSound != null && Camera.main != null)
-        {
-            AudioSource.PlayClipAtPoint(
-                gameOverSound,
-                Camera.main.transform.position
-            );
-        }
-
+        // Allow the scaled Animator to finish before freezing the world.
+        yield return new WaitForSeconds(deathPresentationDelay);
+        if (LosePanel != null) LosePanel.SetActive(true);
+        if (gameOverSound != null && Camera.main != null) AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Time.timeScale = 0f;

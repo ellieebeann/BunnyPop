@@ -324,6 +324,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1465446485}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1465446487}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1465446486}
   m_SourcePrefab: {fileID: 100100000, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
 --- !u!4 &41475242 stripped
 Transform:
@@ -1121,6 +1127,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 255821082}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 255821084}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 255821083}
   m_SourcePrefab: {fileID: 100100000, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
 --- !u!4 &255821077 stripped
 Transform:
@@ -1193,10 +1205,19 @@ MonoBehaviour:
   detectionRadius: 46
   attackRadius: 11.5
   roamRadius: 67.4
-  moveSpeed: 3.5
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
+  walkSpeed: 10
   chaseSpeed: 13
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.79
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
+  moveSpeed: 3.5
 --- !u!114 &255821082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1214,6 +1235,51 @@ MonoBehaviour:
   currentHealth: 30
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &255821083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255821078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &255821084
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 255821078}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 4.7172546
+  m_Speed: 3.5
+  m_Acceleration: 60
+  avoidancePriority: 32
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 16.917725
+  m_BaseOffset: 6
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &256897997
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,8 +1702,13 @@ MonoBehaviour:
   mouseSensitivity: 200
   distance: 23
   height: 11
-  minPitch: -80
-  maxPitch: 80
+  minPitch: -35
+  maxPitch: 70
+  collisionRadius: 0.6
+  returnSpeed: 8
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1939,6 +2010,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
       insertIndex: -1
       addedObject: {fileID: 465043150}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 465043152}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 465043151}
   m_SourcePrefab: {fileID: 100100000, guid: 9f0061733d32bc341be541b093681034, type: 3}
 --- !u!4 &465043145 stripped
 Transform:
@@ -2011,10 +2088,18 @@ MonoBehaviour:
   detectionRadius: 30.8
   attackRadius: 12.5
   roamRadius: 46.6
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.8
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
   minEmoteInterval: 2
   maxEmoteInterval: 5
 --- !u!114 &465043150
@@ -2034,6 +2119,51 @@ MonoBehaviour:
   currentHealth: 20
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &465043151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 465043146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &465043152
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 465043146}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 6.871399
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 30
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 13.742813
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &516206283
 GameObject:
   m_ObjectHideFlags: 0
@@ -2205,6 +2335,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 640668425}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 640668427}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 640668426}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 640668428}
   m_SourcePrefab: {fileID: 100100000, guid: 2419452877e01af44a137bb05b11faf8, type: 3}
 --- !u!4 &542299698 stripped
 Transform:
@@ -2562,6 +2701,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 613266122}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 613266124}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 613266123}
   m_SourcePrefab: {fileID: 100100000, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
 --- !u!4 &613266117 stripped
 Transform:
@@ -2634,10 +2779,19 @@ MonoBehaviour:
   detectionRadius: 46
   attackRadius: 11.5
   roamRadius: 67.4
-  moveSpeed: 3.5
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
+  walkSpeed: 10
   chaseSpeed: 13
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.79
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
+  moveSpeed: 3.5
 --- !u!114 &613266122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2655,6 +2809,51 @@ MonoBehaviour:
   currentHealth: 30
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &613266123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613266118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &613266124
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613266118}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 5.2641754
+  m_Speed: 3.5
+  m_Acceleration: 60
+  avoidancePriority: 38
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 16.965244
+  m_BaseOffset: 6
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &628761195
 GameObject:
   m_ObjectHideFlags: 0
@@ -2797,10 +2996,18 @@ MonoBehaviour:
   detectionRadius: 35
   attackRadius: 14
   roamRadius: 41
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 1
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
 --- !u!95 &640668424
 Animator:
   serializedVersion: 7
@@ -2840,6 +3047,74 @@ MonoBehaviour:
   currentHealth: 35
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &640668426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640668422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &640668427
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640668422}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 4.799988
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 34
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 20.082153
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
+--- !u!136 &640668428
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640668422}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 3.3470256
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.6735128, z: 0}
 --- !u!1 &642231282
 GameObject:
   m_ObjectHideFlags: 0
@@ -2977,6 +3252,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 642231282}
   m_CullTransparentMesh: 1
+--- !u!1 &656140840
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 656140841}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &656140841
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656140840}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1880095472}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &661208221 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
@@ -3258,6 +3564,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1212233772}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1212233774}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1212233773}
   m_SourcePrefab: {fileID: 100100000, guid: 9f0061733d32bc341be541b093681034, type: 3}
 --- !u!4 &788896189 stripped
 Transform:
@@ -3762,6 +4074,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1316075257}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1316075259}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1316075258}
   m_SourcePrefab: {fileID: 100100000, guid: afeb745fc5456ab49a0997836f81c24e, type: 3}
 --- !u!4 &917129472 stripped
 Transform:
@@ -3921,6 +4239,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
       insertIndex: -1
       addedObject: {fileID: 936720896}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 936720898}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 936720897}
   m_SourcePrefab: {fileID: 100100000, guid: 9f0061733d32bc341be541b093681034, type: 3}
 --- !u!4 &936720891 stripped
 Transform:
@@ -3993,10 +4317,18 @@ MonoBehaviour:
   detectionRadius: 40.8
   attackRadius: 7.33
   roamRadius: 32.9
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.8
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
   minEmoteInterval: 2
   maxEmoteInterval: 5
 --- !u!114 &936720896
@@ -4016,6 +4348,51 @@ MonoBehaviour:
   currentHealth: 20
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &936720897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936720892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &936720898
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936720892}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 3.524704
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 35
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 7.049425
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1001 &982075014
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4104,6 +4481,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
       insertIndex: -1
       addedObject: {fileID: 982075020}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 982075022}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 982075021}
   m_SourcePrefab: {fileID: 100100000, guid: 9f0061733d32bc341be541b093681034, type: 3}
 --- !u!4 &982075015 stripped
 Transform:
@@ -4176,10 +4559,18 @@ MonoBehaviour:
   detectionRadius: 45.3
   attackRadius: 24.2
   roamRadius: 49.2
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.8
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
   minEmoteInterval: 2
   maxEmoteInterval: 5
 --- !u!114 &982075020
@@ -4199,6 +4590,51 @@ MonoBehaviour:
   currentHealth: 20
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &982075021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982075016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &982075022
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 982075016}
+  m_Enabled: 1
+  m_AgentTypeID: 74003
+  m_Radius: 12.715866
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 39
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 25.431747
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &1083806212
 GameObject:
   m_ObjectHideFlags: 0
@@ -4512,6 +4948,7 @@ RectTransform:
   - {fileID: 1935671353}
   - {fileID: 1092216424}
   - {fileID: 256897998}
+  - {fileID: 1576935481}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4591,6 +5028,70 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1564564772}
   m_SourcePrefab: {fileID: 100100000, guid: ca37b8285c7a77149aeabc9115504acb, type: 3}
+--- !u!1 &1194289600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1194289602}
+  - component: {fileID: 1194289601}
+  m_Layer: 0
+  m_Name: Enemy Navigation 74003
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1194289601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1194289600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 74003
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 1
+  m_VoxelSize: 0.6
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 2d57a29e2863beb4689c6befb8b8e2e5, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!4 &1194289602
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1194289600}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1212233768 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
@@ -4612,10 +5113,18 @@ MonoBehaviour:
   detectionRadius: 35
   attackRadius: 11.9
   roamRadius: 40.8
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.8
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
   minEmoteInterval: 2
   maxEmoteInterval: 5
 --- !u!95 &1212233770
@@ -4680,6 +5189,51 @@ MonoBehaviour:
   currentHealth: 20
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &1212233773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212233768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &1212233774
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212233768}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 6.3278313
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 40
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 16.319572
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1001 &1232831223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4761,6 +5315,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a3ce101dd0acbaf4b92e3a0162759512, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2029350132}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a3ce101dd0acbaf4b92e3a0162759512, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2029350134}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a3ce101dd0acbaf4b92e3a0162759512, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2029350133}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a3ce101dd0acbaf4b92e3a0162759512, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2029350135}
   m_SourcePrefab: {fileID: 100100000, guid: a3ce101dd0acbaf4b92e3a0162759512, type: 3}
 --- !u!4 &1232831224 stripped
 Transform:
@@ -5049,10 +5612,19 @@ MonoBehaviour:
   detectionRadius: 54
   attackRadius: 17
   roamRadius: 68
-  moveSpeed: 3.5
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
+  walkSpeed: 10
   chaseSpeed: 13
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.79
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
+  moveSpeed: 3.5
 --- !u!136 &1316075255
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5115,6 +5687,51 @@ MonoBehaviour:
   currentHealth: 30
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &1316075258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316075253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &1316075259
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316075253}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 7.997101
+  m_Speed: 3.5
+  m_Acceleration: 60
+  avoidancePriority: 36
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 17.96555
+  m_BaseOffset: 6
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &1342080428
 GameObject:
   m_ObjectHideFlags: 0
@@ -5837,10 +6454,18 @@ MonoBehaviour:
   detectionRadius: 35.4
   attackRadius: 14.75
   roamRadius: 41.03
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 1
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
 --- !u!136 &1465446484
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5881,6 +6506,51 @@ MonoBehaviour:
   currentHealth: 35
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &1465446486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465446481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &1465446487
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465446481}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 3.6599731
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 31
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 17.279999
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &1475611209
 GameObject:
   m_ObjectHideFlags: 0
@@ -6196,6 +6866,143 @@ CapsuleCollider:
   m_Height: 1.6794289
   m_Direction: 1
   m_Center: {x: -0.033916473, y: 0.83986205, z: 0.005409181}
+--- !u!1 &1576935480
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1576935481}
+  - component: {fileID: 1576935483}
+  - component: {fileID: 1576935482}
+  m_Layer: 0
+  m_Name: InteractionPrompt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1576935481
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576935480}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176838432}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.2}
+  m_AnchorMax: {x: 0.5, y: 0.2}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 500, y: 60}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1576935482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576935480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 26
+  m_fontSizeBase: 26
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656bu
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1576935483
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576935480}
+  m_CullTransparentMesh: 1
 --- !u!1 &1603332913
 GameObject:
   m_ObjectHideFlags: 0
@@ -6596,6 +7403,134 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1636109828}
   m_CullTransparentMesh: 1
+--- !u!1 &1662104061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1662104063}
+  - component: {fileID: 1662104062}
+  m_Layer: 0
+  m_Name: Enemy Navigation 74002
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1662104062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662104061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 74002
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 1
+  m_VoxelSize: 0.6
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 19d6bf0d55bfd70418cf1ff198030830, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!4 &1662104063
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662104061}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1748401523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1748401525}
+  - component: {fileID: 1748401524}
+  m_Layer: 0
+  m_Name: Gameplay Navigation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1748401524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748401523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 1
+  m_VoxelSize: 0.6
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 442adbf0e41ce174bb7b7c2da6c4c7bd, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!4 &1748401525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748401523}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1750625358
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6899,6 +7834,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
       insertIndex: 0
       addedObject: {fileID: 1286970096}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 656140841}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
       insertIndex: -1
@@ -6915,6 +7853,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1880095477}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1880095479}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1880095478}
   m_SourcePrefab: {fileID: 100100000, guid: 595c590e9cac140499189e636f36b1e6, type: 3}
 --- !u!4 &1880095472 stripped
 Transform:
@@ -6936,17 +7880,19 @@ MonoBehaviour:
   controller: {fileID: 1880095474}
   cameraTransform: {fileID: 330585546}
   walkSpeed: 14
-  sprintSpeed: 37
-  crouchSpeed: 2.5
-  rotationSpeed: 1.1
-  jumpHeight: 20
-  gravity: -271.7
-  standingHeight: 2
-  crouchingHeight: 1
-  cameraSensitivity: 3
-  cameraDistance: 5
-  minVerticalAngle: -20
-  maxVerticalAngle: 60
+  sprintSpeed: 26
+  crouchSpeed: 7
+  rotationSpeed: 12
+  acceleration: 60
+  jumpHeight: 8
+  gravity: -60
+  coyoteTime: 0.12
+  jumpBuffer: 0.12
+  standingHeight: 2.69
+  crouchingHeight: 1.5
+  obstructionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!143 &1880095474
 CharacterController:
   m_ObjectHideFlags: 0
@@ -7011,6 +7957,8 @@ MonoBehaviour:
   currentHealth: 100
   healthBar: {fileID: 2077632349}
   gameOverSound: {fileID: 0}
+  damageGracePeriod: 0.6
+  deathPresentationDelay: 1.5
 --- !u!114 &1880095477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7023,13 +7971,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7676d27cef49b4db3398e8f978cf8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BunnyAttack
-  attackPoint: {fileID: 0}
+  attackPoint: {fileID: 656140841}
   attackRange: 9
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   attackDamage: 15
   attackSound: {fileID: 0}
+  attackCooldown: 0.65
+  hitDelay: 0.2
+--- !u!114 &1880095478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661208221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!114 &1880095479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661208221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec24746aa14b65a4aa00aede62ded8f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BunnyInteraction
+  interactionRange: 12
+  prompt: {fileID: 1576935482}
 --- !u!1 &1890988422
 GameObject:
   m_ObjectHideFlags: 0
@@ -7528,6 +8512,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2022339185}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2022339187}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9f0061733d32bc341be541b093681034, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2022339186}
   m_SourcePrefab: {fileID: 100100000, guid: 9f0061733d32bc341be541b093681034, type: 3}
 --- !u!4 &2022339180 stripped
 Transform:
@@ -7600,10 +8590,18 @@ MonoBehaviour:
   detectionRadius: 28
   attackRadius: 6.3
   roamRadius: 32.6
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 0.8
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
   minEmoteInterval: 2
   maxEmoteInterval: 5
 --- !u!114 &2022339185
@@ -7623,6 +8621,51 @@ MonoBehaviour:
   currentHealth: 20
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &2022339186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022339181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &2022339187
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2022339181}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 3.8744125
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 33
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 8.04056
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
 --- !u!1 &2029350129 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a3ce101dd0acbaf4b92e3a0162759512, type: 3}
@@ -7666,10 +8709,18 @@ MonoBehaviour:
   detectionRadius: 35
   attackRadius: 14
   roamRadius: 41
+  minIdleTime: 0.7
+  maxIdleTime: 2
+  memoryDuration: 3
   walkSpeed: 10
   chaseSpeed: 15
   rotationSpeed: 10
+  repathInterval: 0.35
+  stuckTimeout: 2
   attackCooldown: 2
+  attackWindup: 0.3
+  attackDamage: 10
+  state: 0
 --- !u!114 &2029350132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7687,6 +8738,74 @@ MonoBehaviour:
   currentHealth: 0
   hitSound: {fileID: 0}
   deathSound: {fileID: 0}
+  corpseLifetime: 4
+  seedDropPrefab: {fileID: 0}
+  seedDropChance: 0.35
+--- !u!114 &2029350133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029350129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 0
+  m_Area: 0
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 1
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffffi
+--- !u!195 &2029350134
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029350129}
+  m_Enabled: 1
+  m_AgentTypeID: 74002
+  m_Radius: 6.4000015
+  m_Speed: 10
+  m_Acceleration: 60
+  avoidancePriority: 37
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 29.255142
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 0
+--- !u!136 &2029350135
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029350129}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.8
+  m_Height: 3.6568928
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.8284464, z: 0}
 --- !u!1 &2077632347
 GameObject:
   m_ObjectHideFlags: 0
@@ -8208,3 +9327,6 @@ SceneRoots:
   - {fileID: 1750625358}
   - {fileID: 1625957662}
   - {fileID: 1135979989}
+  - {fileID: 1748401525}
+  - {fileID: 1662104063}
+  - {fileID: 1194289602}

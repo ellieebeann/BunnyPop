@@ -2,50 +2,36 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public Transform player;
-    public Transform cameraPivot;
-
-    public float mouseSensitivity = 200f;
-    public float distance = 5f;
-    public float height = 1.5f;
-
-    public float minPitch = -80f;
-    public float maxPitch = 80f;
-
-    private float xRotation = 0f;
-    private float yRotation = 0f;
-
+    public Transform player, cameraPivot;
+    public float mouseSensitivity = 200f, distance = 23f, height = 11f;
+    public float minPitch = -35f, maxPitch = 70f;
+    public float collisionRadius = 0.6f, returnSpeed = 8f;
+    public LayerMask obstructionLayers = ~0;
+    private float pitch, yaw, currentDistance;
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        if (cameraPivot != null)
-        {
-            yRotation = cameraPivot.eulerAngles.y;
-        }
+        yaw = cameraPivot != null ? cameraPivot.eulerAngles.y : transform.eulerAngles.y;
+        pitch = 15f;
+        currentDistance = distance;
     }
-
     void LateUpdate()
     {
-        if (player == null || cameraPivot == null) return;
-
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
-
-        // Vertical camera rotation
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, minPitch, maxPitch);
-
-        // Horizontal camera rotation
-        yRotation += mouseX;
-
-        // Update Camera Pivot Position and Rotation
+        if (player == null || cameraPivot == null || Time.timeScale == 0f) return;
+        if (Cursor.lockState == CursorLockMode.Locked && !(player.GetComponent<BunnyHealth>()?.IsDead ?? false))
+        {
+            // Legacy mouse axes already represent frame mouse delta.
+            yaw += Input.GetAxis("Mouse X") * mouseSensitivity * 0.01f;
+            pitch = Mathf.Clamp(pitch - Input.GetAxis("Mouse Y") * mouseSensitivity * 0.01f, minPitch, maxPitch);
+        }
         cameraPivot.position = player.position + Vector3.up * height;
-        cameraPivot.rotation = Quaternion.Euler(xRotation, yRotation, 0f);
-
-        // Set Camera Distance & Position relative to Pivot
-        transform.position = cameraPivot.position - (cameraPivot.forward * distance);
-        transform.rotation = cameraPivot.rotation;
+        cameraPivot.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        float safeDistance = distance;
+        foreach (var hit in Physics.SphereCastAll(cameraPivot.position, collisionRadius, -cameraPivot.forward, distance, obstructionLayers, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.transform.IsChildOf(player)) continue;
+            safeDistance = Mathf.Min(safeDistance, Mathf.Max(0.1f, hit.distance - 0.2f));
+        }
+        currentDistance = safeDistance < currentDistance ? safeDistance : Mathf.Lerp(currentDistance, safeDistance, 1f - Mathf.Exp(-returnSpeed * Time.deltaTime));
+        transform.SetPositionAndRotation(cameraPivot.position - cameraPivot.forward * currentDistance, cameraPivot.rotation);
     }
 }
