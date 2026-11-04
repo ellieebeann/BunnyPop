@@ -8,7 +8,7 @@ A living player must be within detection range and visible to trigger chase. Ene
 
 In range, enemies face the player and attack on a cooldown. Damage is applied after a windup only if the player is still in range and visible. Getting hit interrupts a pending enemy attack. Dead enemies stop navigating and attacking while their death animation plays.
 
-EnemyHealth supports optional seed loot: assign a Seed prefab to Seed Drop Prefab and choose Seed Drop Chance. Dropped seeds use the existing E collection system. Existing scene enemies leave this reference empty to preserve the current two-seed objective.
+Scene enemies can drop a magical seed or a wand recharge. Both use E collection. Wand recharges restore up to two charges within the five-charge capacity and do not count toward the seed objective.
 
 ## Navigation
 

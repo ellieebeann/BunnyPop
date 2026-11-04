@@ -214,6 +214,7 @@ public static class BunnyPopEnemyVerification
         lootTemplate.SetActive(false);
         enemyHealth.seedDropPrefab = seedPrefab;
         enemyHealth.seedDropChance = 1f;
+        enemyHealth.wandChargeDropPrefab = null;
         enemyHealth.TakeDamage(9999);
         Vector3 deathPosition = ai.transform.position;
         yield return new WaitForSeconds(0.5f);

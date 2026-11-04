@@ -8,6 +8,7 @@ public class EnemyHealth : MonoBehaviour
     public float corpseLifetime = 4f;
     [Header("Optional seed loot (assign a prefab to enable)")]
     public Seed seedDropPrefab;
+    public Seed wandChargeDropPrefab;
     [Range(0f, 1f)] public float seedDropChance = 0.35f;
     public Seed DroppedSeed { get; private set; }
     public bool IsDead { get; private set; }
@@ -30,9 +31,11 @@ public class EnemyHealth : MonoBehaviour
         if (ai != null) ai.TriggerDeath();
         if (animator != null) { animator.ResetTrigger("Hit"); animator.ResetTrigger("Attack"); animator.SetBool("IsDead", true); }
         foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
-        if (seedDropPrefab != null && Random.value < seedDropChance)
+        Seed loot = seedDropPrefab;
+        if (wandChargeDropPrefab != null && (loot == null || Random.value < 0.5f)) loot = wandChargeDropPrefab;
+        if (loot != null && (seedDropChance >= 1f || Random.value < seedDropChance))
         {
-            DroppedSeed = Instantiate(seedDropPrefab, transform.position + Vector3.up * 6f, Quaternion.identity);
+            DroppedSeed = Instantiate(loot, transform.position + Vector3.up * 6f, Quaternion.identity);
             DroppedSeed.gameObject.SetActive(true);
         }
         if (deathSound != null) AudioSource.PlayClipAtPoint(deathSound, transform.position);

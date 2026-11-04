@@ -113,17 +113,25 @@ public static class BunnyPopVerification
                     attack.CancelAttack();
                     wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     wall.name = "Verification trunk";
-                    wall.transform.position = attack.attackPoint.position + Vector3.forward * 1.5f;
+                    Vector3 launchPoint = bunny.controller.bounds.center;
+                    var enemyBody = enemy.GetComponentInChildren<Collider>();
+                    enemy.transform.position += launchPoint + Vector3.forward * 30f - enemyBody.bounds.center;
+                    wall.transform.position = launchPoint + Vector3.forward * 10f;
                     wall.transform.localScale = new Vector3(20, 20, 1);
                     Physics.SyncTransforms();
                     deadline = EditorApplication.timeSinceStartup + 0.7;
                     break;
                 case 2:
-                    Check(attack.TryAttack(true), "Q weapon animation uses damage pipeline");
-                    deadline = EditorApplication.timeSinceStartup + 0.3;
+                    var aim = new GameObject("Obstacle verification camera").AddComponent<Camera>();
+                    aim.enabled = false;
+                    aim.transform.SetPositionAndRotation(bunny.controller.bounds.center + new Vector3(6f, 0f, -16f), Quaternion.identity);
+                    aim.transform.LookAt(wall.transform.position);
+                    attack.aimCamera = aim;
+                    Check(attack.TryAttack(true), "Q starts a ranged wand attack");
+                    deadline = EditorApplication.timeSinceStartup + 0.6;
                     break;
                 case 3:
-                    Check(enemy.currentHealth == initialHP - attack.attackDamage, "Solid trunk blocks player melee damage");
+                    Check(enemy.currentHealth == initialHP - attack.attackDamage, "Solid trunk blocks the wand projectile");
                     UnityEngine.Object.Destroy(wall);
                     attack.CancelAttack();
                     var manager = GameManager.instance;

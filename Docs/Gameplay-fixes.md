@@ -3,8 +3,8 @@
 ## Controls
 
 - WASD: camera-relative movement; Shift: sprint; Left Ctrl: crouch; Space: jump.
-- Left or right mouse: melee punch. Q: weapon swing using the same melee damage pipeline.
-- E: collect the nearest visible seed within interaction range. Merely touching its trigger no longer collects it.
+- Left mouse: melee punch. Q: fire a glowing carrot toward the centered crosshair, using one wand charge.
+- E: unlock the forest gate or collect the nearest visible seed or wand charge.
 - Escape: release/relock the cursor. Movement input and attacks stop while the cursor is released; gravity continues.
 
 ## Implemented
@@ -35,7 +35,7 @@ Navigation now uses three collider-based bakes with radius clearances of 4, 8.5 
 
 ## Remaining design work
 
-This pass focuses on player movement, combat/death, enemy patrol, and E pickups. It does not complete the broader game design: Q projectiles/ammo, five-minute timer, altar restoration, chest/gate interactions, inventory grid, functional menu/restart flow, or audio content. The current scene still uses its two-seed test victory condition.
+This pass focuses on player movement, combat/death, enemy patrol, and E pickups. It does not complete the broader game design: five-minute timer, altar restoration, chest interactions, inventory grid, functional menu/restart flow, or audio content. The current scene still uses its two-seed test victory condition.
 
 Headless checks establish functional behavior. Camera feel, animation blending and the exact fit of trunk capsules still benefit from a visual playtest on the target machine.
 

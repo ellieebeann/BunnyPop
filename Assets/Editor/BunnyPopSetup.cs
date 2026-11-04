@@ -99,13 +99,12 @@ public static class BunnyPopSetup
             var machine = controller.layers[0].stateMachine;
             var walk = machine.states.Select(s => s.state).First(s => s.name.EndsWith("|Walk"));
             var idle = machine.states.Select(s => s.state).FirstOrDefault(s => s.name.EndsWith("|Idle"));
-            if (idle == null)
-            {
-                string modelPath = controllerPath.Contains("/Orc/") ? "Assets/Orc/Orc.fbx" : "Assets/Slime/Enemy.fbx";
-                var clip = AssetDatabase.LoadAllAssetsAtPath(modelPath).OfType<AnimationClip>().First(c => c.name.EndsWith("|Idle"));
-                idle = machine.AddState(clip.name);
-                idle.motion = clip;
-            }
+            string modelPath = controllerPath.Contains("/Orc/") ? "Assets/Orc/Orc.fbx" : "Assets/Slime/Enemy.fbx";
+            var clip = AssetDatabase.LoadAllAssetsAtPath(modelPath).OfType<AnimationClip>()
+                .First(c => c.name.EndsWith("|Idle") && !c.name.StartsWith("__preview__"));
+            if (idle == null) idle = machine.AddState(clip.name);
+            idle.name = clip.name;
+            idle.motion = clip;
             if (!walk.transitions.Any(t => t.destinationState == idle))
             {
                 var transition = walk.AddTransition(idle);
@@ -123,6 +122,10 @@ public static class BunnyPopSetup
                 transition.AddCondition(AnimatorConditionMode.IfNot, 0, "IsDead");
             }
             machine.defaultState = idle;
+            var parameters = controller.parameters;
+            foreach (var parameter in parameters)
+                if (parameter.name == "IsDead") parameter.type = AnimatorControllerParameterType.Bool;
+            controller.parameters = parameters;
             foreach (var transition in machine.anyStateTransitions)
             {
                 bool death = transition.conditions.Any(c => c.parameter == "IsDead" && c.mode == AnimatorConditionMode.If);

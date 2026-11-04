@@ -72,6 +72,8 @@ public static class BunnyPopGroundVerification
         typeof(BunnyController).GetField("lastGrounded", fields).SetValue(bunny, float.NegativeInfinity);
         typeof(BunnyController).GetField("lastJump", fields).SetValue(bunny, float.NegativeInfinity);
         typeof(BunnyController).GetField("jumpInProgress", fields).SetValue(bunny, false);
+        typeof(BunnyController).GetField("moveSupportNormal", fields).SetValue(bunny, Vector3.zero);
+        typeof(BunnyController).GetField("steepSupport", fields).SetValue(bunny, false);
         Physics.SyncTransforms();
     }
     static IEnumerator Verify()
@@ -142,6 +144,128 @@ public static class BunnyPopGroundVerification
         until = Time.time + 0.25f;
         while (Time.time < until) { step(Vector2.zero, false, false); yield return null; }
         Check(!bunny.IsGrounded && animator.GetBool("IsJumping"), "Vertical wall contact does not count as walkable ground");
+        var ramp = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        ramp.transform.SetPositionAndRotation(new Vector3(1100, 1000, 1100), Quaternion.Euler(-35, 0, 0));
+        ramp.transform.localScale = new Vector3(30, 2, 100);
+        ResetPlayer(bunny, new Vector3(1100, 989, 1080));
+        until = Time.time + 0.5f;
+        while (Time.time < until) { step(Vector2.zero, false, false); yield return null; }
+        Vector3 rampStart = bunny.transform.position;
+        until = Time.time + 1.4f;
+        while (Time.time < until) { step(Vector2.up, false, false); yield return null; }
+        Check(bunny.transform.position.z > rampStart.z + 10f && bunny.transform.position.y > rampStart.y + 6f,
+            "Bunny climbs a 35-degree incline; displacement=" + (bunny.transform.position - rampStart));
+        Check(bunny.IsGrounded && animator.GetCurrentAnimatorStateInfo(0).IsName("CharacterArmature|Walk"),
+            "Walk animation plays while climbing");
+        until = Time.time + 0.5f;
+        while (Time.time < until) { step(Vector2.up, true, false); yield return null; }
+        Check(animator.GetCurrentAnimatorStateInfo(0).IsName("CharacterArmature|Run"), "Sprint enters original run clip");
+        until = Time.time + 0.5f;
+        while (Time.time < until)
+        {
+            move.Invoke(bunny, new object[] { Vector2.zero, false, true, false });
+            yield return null;
+        }
+        Check(animator.GetCurrentAnimatorStateInfo(0).IsName("CharacterArmature|Duck"), "Crouch enters original duck clip");
+        ramp.transform.rotation = Quaternion.Euler(-55, 0, 0);
+        ResetPlayer(bunny, new Vector3(1100, 1005, 1100));
+        until = Time.time + 0.6f;
+        while (Time.time < until) { step(Vector2.zero, false, false); yield return null; }
+        Vector3 steepStart = bunny.transform.position;
+        var vertical = typeof(BunnyController).GetField("verticalSpeed", BindingFlags.Instance | BindingFlags.NonPublic);
+        int hops = 0;
+        float nextPress = Time.time;
+        until = Time.time + 2f;
+        while (Time.time < until)
+        {
+            float before = (float)vertical.GetValue(bunny);
+            bool press = Time.time >= nextPress;
+            if (press) nextPress = Time.time + 0.1f;
+            step(Vector2.up, false, press);
+            if (before <= 0f && (float)vertical.GetValue(bunny) > 0f) hops++;
+            yield return null;
+        }
+        Check(hops >= 2 && bunny.transform.position.z > steepStart.z + 3f,
+            "Repeated presses climb the 55-degree slope with separate jumps; hops=" + hops
+            + ", displacement=" + (bunny.transform.position - steepStart));
+
+        var slime = UnityEngine.Object.FindAnyObjectByType<SlimeAI>();
+        var slimeAnimator = slime.GetComponent<Animator>();
+        slimeAnimator.Play("MonsterArmature|Idle");
+        yield return null;
+        var idle = slimeAnimator.GetCurrentAnimatorClipInfo(0);
+        Check(idle.Length > 0 && idle[0].clip.name == "MonsterArmature|Idle", "Slime idle uses the imported runtime clip");
+        slimeAnimator.SetBool("IsWalking", true);
+        yield return new WaitForSeconds(0.35f);
+        Check(slimeAnimator.GetCurrentAnimatorStateInfo(0).IsName("MonsterArmature|Walk"), "Slime Animator switches from idle to walk");
+        slime.GetComponent<EnemyHealth>().TakeDamage(int.MaxValue);
+        yield return new WaitForSeconds(0.35f);
+        Check(slimeAnimator.GetCurrentAnimatorStateInfo(0).IsName("MonsterArmature|Death"), "Slime enters death animation at zero HP");
+
+        var bee = UnityEngine.Object.FindAnyObjectByType<BeeAI>();
+        var beeAnimator = bee.GetComponent<Animator>();
+        Check(beeAnimator.GetBool("IsFlying") && beeAnimator.GetCurrentAnimatorStateInfo(0).IsName("MonsterArmature|Flying"),
+            "Bee starts in its original flying animation");
+        beeAnimator.SetTrigger("Attack");
+        yield return new WaitForSeconds(0.3f);
+        Check(beeAnimator.GetCurrentAnimatorStateInfo(0).IsName("MonsterArmature|Bite_Front"), "Bee attack trigger plays bite");
+        bee.GetComponent<EnemyHealth>().TakeDamage(1);
+        yield return new WaitForSeconds(0.3f);
+        Check(beeAnimator.GetCurrentAnimatorStateInfo(0).IsName("MonsterArmature|HitRecieve"), "Bee damage plays hit reaction");
+        bee.GetComponent<EnemyHealth>().TakeDamage(int.MaxValue);
+        yield return new WaitForSeconds(0.3f);
+        Check(beeAnimator.GetCurrentAnimatorStateInfo(0).IsName("MonsterArmature|Death"), "Bee death takes priority");
+
+        var gate = UnityEngine.Object.FindAnyObjectByType<ForestGate>();
+        var health = bunny.GetComponent<BunnyHealth>();
+        var terrain = Terrain.activeTerrain;
+        Vector3 approach = gate.transform.TransformPoint(new Vector3(0, 0, -8));
+        approach.y = terrain.SampleHeight(approach) + terrain.transform.position.y + 0.5f;
+        ResetPlayer(bunny, approach);
+        bunny.cameraTransform.rotation = gate.transform.rotation;
+        until = Time.time + 0.8f;
+        while (Time.time < until) { step(Vector2.up, false, false); yield return null; }
+        Check(gate.transform.InverseTransformPoint(bunny.transform.position).z < 0f
+            && !gate.sentry.gameObject.activeSelf, "Closed gate blocks passage and keeps the sentry dormant");
+        var interaction = bunny.GetComponent<BunnyInteraction>();
+        var findTarget = typeof(BunnyInteraction).GetMethod("FindTarget", BindingFlags.Instance | BindingFlags.NonPublic);
+        Check((Component)findTarget.Invoke(interaction, new object[] { bunny.controller.bounds.center }) == gate
+            && gate.Unlock(health), "E interaction selects and unlocks the forest gate");
+        Check(!gate.gateCollider.enabled && !gate.obstacle.enabled && !gate.sentry.gameObject.activeSelf,
+            "Unlocked gate clears the route before the player enters");
+        until = Time.time + 0.85f;
+        while (Time.time < until) { step(Vector2.up, false, false); yield return null; }
+        Check(gate.sentry.HasNavigation && gate.sentry.CurrentState == EnemyAI.BehaviourState.Chase,
+            "Crossing the gate activates the sentry and starts a chase");
+        gate.sentry.enabled = false;
+        gate.sentry.GetComponent<NavMeshAgent>().enabled = false;
+        ResetPlayer(bunny, new Vector3(1200, 1000, 1200));
+        var target = gate.sentry.GetComponent<EnemyHealth>();
+        var body = target.GetComponentInChildren<Collider>();
+        target.transform.position += bunny.controller.bounds.center + Vector3.forward * 25f - body.bounds.center;
+        Physics.SyncTransforms();
+        var wand = bunny.GetComponent<BunnyAttack>();
+        Check(wand.aimCamera != null && wand.crosshair != null, "Gameplay camera and centered crosshair are assigned");
+        var testCamera = new GameObject("Verification shoulder camera").AddComponent<Camera>();
+        testCamera.enabled = false;
+        testCamera.transform.position = bunny.controller.bounds.center + new Vector3(9f, 3f, -16f);
+        testCamera.transform.LookAt(body.bounds.center);
+        wand.aimCamera = testCamera;
+        bunny.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+        Physics.SyncTransforms();
+        int hp = target.currentHealth;
+        int charges = wand.CarrotCharges;
+        Check(wand.TryAttack(true), "Wand attack starts");
+        yield return new WaitForSeconds(0.85f);
+        Check(target.currentHealth == Mathf.Max(0, hp - wand.projectileDamage) && wand.CarrotCharges == charges - 1,
+            "Carrot hits the crosshair target from an offset camera and spends one charge");
+        var chargePrefab = target.wandChargeDropPrefab;
+        target.seedDropPrefab = null;
+        target.seedDropChance = 1f;
+        target.TakeDamage(int.MaxValue);
+        Check(target.DroppedSeed != null && target.DroppedSeed.carrotCharges == chargePrefab.carrotCharges
+            && target.DroppedSeed.Collect(health) && wand.CarrotCharges == charges,
+            "Defeated enemy drops a collectible wand recharge");
         Check(errors == 0, "No runtime errors during grounding verification");
     }
     static void Finish(bool ok, string text)
