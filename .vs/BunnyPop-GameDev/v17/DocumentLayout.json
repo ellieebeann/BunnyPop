@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bunnyattack.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\assets\\scripts\\bunnycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bunnycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\assets\\scripts\\seed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\seed.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|c:\\users\\ellie regodon\\bunnypop-gamedev\\assets\\scripts\\enemyhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\assets\\scripts\\enemyhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\enemyhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\assets\\scripts\\bunnycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bunnycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DBFE2FF5-540D-5FB8-757A-8C6E717D84DA}|Assembly-CSharp.csproj|C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\assets\\scripts\\bunnyhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -60,14 +60,14 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\BunnyAttack.cs",
               "ToolTip": "C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\Assets\\Scripts\\BunnyAttack.cs",
               "RelativeToolTip": "Assets\\Scripts\\BunnyAttack.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAhAAAAAAAAAA==",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAuwOkAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-02T13:11:47.286Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "EnemyHealth.cs",
               "DocumentMoniker": "C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\Assets\\Scripts\\EnemyHealth.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EnemyHealth.cs",
@@ -75,8 +75,7 @@
               "RelativeToolTip": "Assets\\Scripts\\EnemyHealth.cs",
               "ViewState": "AgIAABsAAAAAAAAAAAAYwBAAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T13:10:13.491Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-02T13:10:13.491Z"
             },
             {
               "$type": "Document",
@@ -104,7 +103,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Seed.cs",
               "DocumentMoniker": "C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\Assets\\Scripts\\Seed.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Seed.cs",
@@ -112,8 +111,7 @@
               "RelativeToolTip": "Assets\\Scripts\\Seed.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAmwA8AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-02T12:24:49.673Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-11-02T12:24:49.673Z"
             },
             {
               "$type": "Document",
@@ -153,13 +151,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "BunnyController.cs",
               "DocumentMoniker": "C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\Assets\\Scripts\\BunnyController.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\BunnyController.cs",
               "ToolTip": "C:\\Users\\Ellie Regodon\\BunnyPop-GameDev\\Assets\\Scripts\\BunnyController.cs",
               "RelativeToolTip": "Assets\\Scripts\\BunnyController.cs",
-              "ViewState": "AgIAALcAAAAAAAAAAAAuwNMAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAALcAAAAAAAAAAAA+wNMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-11-02T11:51:35.657Z",
               "EditorCaption": ""

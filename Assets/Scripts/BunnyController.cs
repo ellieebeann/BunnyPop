@@ -61,8 +61,8 @@ public class BunnyController : MonoBehaviour
         Move(acceptInput ? new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) : Vector2.zero,
             acceptInput && Input.GetKey(KeyCode.LeftShift), acceptInput && Input.GetKey(KeyCode.LeftControl),
             acceptInput && Input.GetButtonDown("Jump"));
-        if (acceptInput && Input.GetMouseButtonDown(0)) attack.TryAttack(false);
-        if (acceptInput && Input.GetKeyDown(KeyCode.Q)) attack.TryAttack(true);
+
+        // Attack input is now fully handled in BunnyAttack.cs to avoid overlapping attack triggers.
     }
 
     void Move(Vector2 movementInput, bool sprintRequested, bool crouchRequested, bool jumpRequested)
@@ -83,7 +83,6 @@ public class BunnyController : MonoBehaviour
         if (Mathf.Abs(controller.height - height) > 0.0001f)
         {
             controller.height = height;
-            // Avoid rebuilding the controller on every grounded frame.
             controller.center = standingCenter + Vector3.up * ((height - standingHeight) * 0.5f);
         }
         Vector2 input = Vector2.ClampMagnitude(movementInput, 1f);
@@ -107,13 +106,11 @@ public class BunnyController : MonoBehaviour
         Vector3 movement = planarVelocity + Vector3.up * verticalSpeed;
         if (groundedBeforeMove && !jumpInProgress)
         {
-            // Follow the surface instead of pushing horizontal input down into an incline.
             Vector3 tangent = Vector3.ProjectOnPlane(planarVelocity, groundNormal);
             movement = tangent.normalized * planarVelocity.magnitude - groundNormal * groundStickSpeed;
         }
         moveSupportNormal = Vector3.zero;
         steepSupport = false;
-        // Lift clear of steep contact before feeding uphill input back to the controller.
         if (launched && jumpFromSteepSlope) movement = Vector3.up * verticalSpeed;
         CollisionFlags flags = controller.Move(movement * Time.deltaTime);
         if ((flags & CollisionFlags.Above) != 0 && verticalSpeed > 0f) verticalSpeed = 0f;
@@ -174,7 +171,6 @@ public class BunnyController : MonoBehaviour
         {
             var hit = groundHits[i];
             if (hit.transform.IsChildOf(transform) || hit.collider.GetComponentInParent<EnemyHealth>() != null) continue;
-            // Initial overlaps have no reliable support normal (a wall can report up).
             if (hit.distance <= 0.0001f) continue;
             if (Vector3.Dot(hit.normal, Vector3.up) < minimumUp) continue;
             float hitGap = Mathf.Max(0f, hit.distance - offset);

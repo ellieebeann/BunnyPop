@@ -8444,13 +8444,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   controller: {fileID: 1880095474}
   cameraTransform: {fileID: 330585546}
-  walkSpeed: 14
-  sprintSpeed: 26
-  crouchSpeed: 7
-  rotationSpeed: 12
+  walkSpeed: 20
+  sprintSpeed: 30
+  crouchSpeed: 13
+  rotationSpeed: 15
   acceleration: 60
-  jumpHeight: 8
-  gravity: -60
+  jumpHeight: 10
+  gravity: -100
   coyoteTime: 0.12
   jumpBuffer: 0.12
   steepJumpLimit: 75
