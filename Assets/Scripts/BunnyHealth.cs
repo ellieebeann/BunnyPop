@@ -30,6 +30,7 @@ public class BunnyHealth : MonoBehaviour
             return;
         }
         IsDead = true;
+        GameManager.instance?.BeginDeath();
         GetComponent<BunnyController>()?.TriggerDeath();
         StartCoroutine(GameOver());
     }
@@ -38,6 +39,7 @@ public class BunnyHealth : MonoBehaviour
     {
         // Allow the scaled Animator to finish before freezing the world.
         yield return new WaitForSeconds(deathPresentationDelay);
+        if (GameManager.instance != null) { GameManager.instance.GameOver(); yield break; }
         if (LosePanel != null) LosePanel.SetActive(true);
         if (gameOverSound != null && Camera.main != null) AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position);
         Cursor.lockState = CursorLockMode.None;

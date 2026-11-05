@@ -1,13 +1,14 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController), typeof(BunnyAttack))]
+[DefaultExecutionOrder(-20)]
 public class BunnyController : MonoBehaviour
 {
     public CharacterController controller;
     public Transform cameraTransform;
 
     [Header("Movement (world units)")]
-    public float walkSpeed = 14f, sprintSpeed = 26f, crouchSpeed = 7f;
+    public float walkSpeed = 18f, sprintSpeed = 32f, crouchSpeed = 9f;
     public float rotationSpeed = 12f, acceleration = 60f;
 
     [Header("Jump")]
@@ -49,6 +50,8 @@ public class BunnyController : MonoBehaviour
     private bool steepSupport;
     private float nextStepTime;
     private bool previousCrouchState;
+    private Vector3 lastSafePosition;
+    private Terrain[] worldTerrains;
 
     private readonly Collider[] clearance = new Collider[32];
     private readonly RaycastHit[] groundHits = new RaycastHit[32];
@@ -59,6 +62,8 @@ public class BunnyController : MonoBehaviour
         animator = GetComponent<Animator>();
         attack = GetComponent<BunnyAttack>();
         standingCenter = controller.center;
+        lastSafePosition = transform.position;
+        worldTerrains = Terrain.activeTerrains;
 
         if (audioSource == null)
         {
@@ -70,23 +75,25 @@ public class BunnyController : MonoBehaviour
     void Start()
     {
         if (cameraTransform == null && Camera.main != null) cameraTransform = Camera.main.transform;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (GameManager.instance == null) { Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false; }
     }
 
     void Update()
     {
         if (IsDead || Time.timeScale == 0f) return;
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (GameManager.instance == null && Input.GetKeyDown(KeyCode.Escape))
         {
             bool locked = Cursor.lockState == CursorLockMode.Locked;
             Cursor.lockState = locked ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = locked;
         }
-        bool acceptInput = Cursor.lockState == CursorLockMode.Locked;
+        bool acceptInput = GameManager.instance != null
+            ? GameManager.WantsCursorLocked && !GameManager.IsPaused && Application.isFocused
+            : Cursor.lockState == CursorLockMode.Locked;
         Move(acceptInput ? new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) : Vector2.zero,
             acceptInput && Input.GetKey(KeyCode.LeftShift), acceptInput && Input.GetKey(KeyCode.LeftControl),
             acceptInput && Input.GetButtonDown("Jump"));
+        GuardWorldEdges();
     }
 
     void Move(Vector2 movementInput, bool sprintRequested, bool crouchRequested, bool jumpRequested)
@@ -129,7 +136,12 @@ public class BunnyController : MonoBehaviour
         float speed = crouched ? crouchSpeed : sprinting ? sprintSpeed : walkSpeed;
         planarVelocity = Vector3.MoveTowards(planarVelocity, direction * speed, acceleration * Time.deltaTime);
 
-        if (direction.sqrMagnitude > 0.001f && !attack.IsAttacking)
+        if (attack.IsAiming && cameraTransform != null)
+        {
+            Vector3 aim = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up);
+            if (aim.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(aim);
+        }
+        else if (direction.sqrMagnitude > 0.001f && !attack.IsAttacking)
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 1f - Mathf.Exp(-rotationSpeed * Time.deltaTime));
 
         bool jumpFromSteepSlope = !groundedBeforeMove && verticalSpeed <= 0f && steepSupport;
@@ -181,7 +193,32 @@ public class BunnyController : MonoBehaviour
         animator.SetBool("IsMoving", planarVelocity.sqrMagnitude > 0.1f);
         animator.SetBool("IsSprinting", sprinting);
         animator.SetBool("IsCrouching", crouched);
-        animator.SetBool("IsJumping", jumpInProgress || (!IsGrounded && Time.time - lastGrounded > airborneDelay));
+        // A steep physical contact is a landing too, even when it cannot be walked.
+        bool airborne = !IsGrounded && !steepSupport;
+        animator.SetBool("IsJumping", airborne && (jumpInProgress || Time.time - lastGrounded > airborneDelay));
+    }
+
+    void GuardWorldEdges()
+    {
+        if (worldTerrains == null || worldTerrains.Length == 0) return;
+        bool inside = false;
+        foreach (var terrain in worldTerrains)
+        {
+            Vector3 local = transform.position - terrain.transform.position;
+            Vector3 size = terrain.terrainData.size;
+            if (local.x < 2f || local.z < 2f || local.x > size.x - 2f || local.z > size.z - 2f) continue;
+            inside = transform.position.y > terrain.SampleHeight(transform.position) + terrain.transform.position.y - 20f;
+            if (inside && IsGrounded && !steepSupport) lastSafePosition = transform.position;
+            break;
+        }
+        if (inside) return;
+        controller.enabled = false;
+        transform.position = lastSafePosition;
+        controller.enabled = true;
+        planarVelocity = Vector3.zero;
+        verticalSpeed = 0;
+        jumpInProgress = false;
+        moveSupportNormal = Vector3.zero;
     }
 
     private void HandleMovementAudio(bool isMovingOnGround, bool isSprinting)

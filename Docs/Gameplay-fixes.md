@@ -1,11 +1,13 @@
 # Player and combat pass
 
+Current game-loop configuration, menus, bubble combat and Inspector replacement points are documented in [Polish-checklist.md](Polish-checklist.md).
+
 ## Controls
 
 - WASD: camera-relative movement; Shift: sprint; Left Ctrl: crouch; Space: jump.
-- Left mouse: melee punch. Q: fire a glowing carrot toward the centered crosshair, using one wand charge.
-- E: unlock the forest gate or collect the nearest visible seed or wand charge.
-- Escape: release/relock the cursor. Movement input and attacks stop while the cursor is released; gravity continues.
+- Left mouse: melee punch. Hold Q and left-click to aim and cast a bubble after opening the wand chest.
+- E: open the chest, unlock the gate, collect a nearby visible pickup, or restore seeds at the altar.
+- Escape or P: pause/resume. Tab: objectives and instructions. Restart resets pause and cursor state.
 
 ## Implemented
 
@@ -23,7 +25,7 @@ The scene's scale is large: the Bunny model is scaled about five times. Movement
 
 ## Editor tools
 
-**BunnyPop > Prepare Gameplay Scene** updates the sample gameplay scene wiring and rebakes the persistent collider-based NavMesh. Use this deliberately after changing environment colliders; it also reapplies this pass's player tuning and prompt wiring. Keep the scene saved before running it.
+Use **BunnyPop > Polish > Rebuild Navigation After World Changes** after moving environment colliders. The older Prepare Gameplay Scene / Prepare Enemy Behaviour utilities belong to the earlier movement pass and restore its tuning; use the current Inspector and Polish tools for this version.
 
 **BunnyPop > Verify Gameplay** runs regression checks in Play mode and stops when finished. It uses temporary runtime fixtures; scene assets are not saved by verification. The headless command is:
 
@@ -33,9 +35,9 @@ Do not add -quit: verification exits batch mode itself after the asynchronous ch
 
 Navigation now uses three collider-based bakes with radius clearances of 4, 8.5 and 13.5 for small, medium and large enemies (climb 2). Decorative foliage without colliders is intentionally not a solid navigation obstacle. Keep tree trunks non-trigger and rebake when changing them. Ground and bee enemies follow the walkable NavMesh; bees use a height offset rather than unrestricted aerial pathfinding.
 
-## Remaining design work
+## Current game loop
 
-This pass focuses on player movement, combat/death, enemy patrol, and E pickups. It does not complete the broader game design: five-minute timer, altar restoration, chest interactions, inventory grid, functional menu/restart flow, or audio content. The current scene still uses its two-seed test victory condition.
+The scene now has a five-minute timer, five-seed inventory, wand chest, altar, enemy-clear objective, menus/restart flow and supplied music/audio. Five seeds alone do not end the game: defeat the remaining enemies and use E at the altar. See Polish-checklist.md for the current verification results and replacement slots.
 
 Headless checks establish functional behavior. Camera feel, animation blending and the exact fit of trunk capsules still benefit from a visual playtest on the target machine.
 

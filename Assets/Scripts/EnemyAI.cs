@@ -18,6 +18,8 @@ public abstract class EnemyAI : MonoBehaviour
     [Header("Attack")]
     public float attackCooldown = 1.2f, attackWindup = 0.3f;
     public int attackDamage = 10;
+    public AudioClip attackSound;
+    public float detectionHeight = 45f;
     [SerializeField] private BehaviourState state;
     public BehaviourState CurrentState => state;
     public Vector3 HomePosition => home;
@@ -37,6 +39,7 @@ public abstract class EnemyAI : MonoBehaviour
     private BunnyHealth playerHealth;
     private Terrain[] terrains;
     private NavMeshPath path;
+    private AudioSource actionAudio;
     private readonly RaycastHit[] obstacles = new RaycastHit[64];
 
     protected virtual void Start()
@@ -106,10 +109,11 @@ public abstract class EnemyAI : MonoBehaviour
         if (playerHealth != null && playerHealth.IsDead) { StopMoving(); return; }
         if (attacking) { StopMoving(); FacePlayer(); return; }
 
-        float distance = player != null ? Vector3.Distance(transform.position, player.position) : float.PositiveInfinity;
+        float distance = PlayerDistance();
         float territory = Mathf.Max(roamRadius + detectionRadius, detectionRadius * 1.5f);
         bool outsideTerritory = HorizontalDistance(transform.position, home) > territory;
-        bool seesPlayer = !outsideTerritory && distance <= detectionRadius && CanSeePlayer();
+        bool seesPlayer = !outsideTerritory && distance <= detectionRadius
+            && (player == null || Mathf.Abs(player.position.y - transform.position.y) <= detectionHeight) && CanSeePlayer();
 
         if (seesPlayer)
         {
@@ -329,11 +333,22 @@ public abstract class EnemyAI : MonoBehaviour
         attacking = true;
         nextAttack = Time.time + Mathf.Max(attackCooldown, attackWindup + 0.1f);
         if (animator != null) animator.SetTrigger("Attack");
+        PlayActionSound(attackSound);
         yield return new WaitForSeconds(attackWindup);
         if (!isDead && playerHealth != null && !playerHealth.IsDead
-            && Vector3.Distance(transform.position, player.position) <= attackRadius && CanSeePlayer())
+            && PlayerDistance() <= attackRadius && CanSeePlayer())
             playerHealth.TakeDamage(attackDamage);
         attacking = false;
+    }
+
+    float PlayerDistance()
+    {
+        if (player == null) return float.PositiveInfinity;
+        if (!Flying) return Vector3.Distance(transform.position, player.position);
+        // Hover height must not prevent acquiring a player down a gentle bank.
+        // Keep a vertical melee limit so a bee cannot bite through a cliff.
+        float horizontal = HorizontalDistance(transform.position, player.position);
+        return Mathf.Max(horizontal, Mathf.Abs(transform.position.y - player.position.y) * 0.65f);
     }
 
     void FacePlayer()
@@ -352,6 +367,7 @@ public abstract class EnemyAI : MonoBehaviour
         if (isDead) return;
         StopAllCoroutines();
         attacking = false;
+        if (actionAudio != null) actionAudio.Stop();
         nextAttack = Mathf.Max(nextAttack, Time.time + 0.35f);
         if (animator != null) { animator.ResetTrigger("Attack"); animator.SetTrigger("Hit"); }
     }
@@ -362,6 +378,7 @@ public abstract class EnemyAI : MonoBehaviour
         state = BehaviourState.Dead;
         StopAllCoroutines();
         attacking = false;
+        StopOwnedAudio(true);
         if (HasNavigation) { StopMoving(); agent.ResetPath(); }
         if (agent != null) agent.enabled = false;
         if (animator != null) { animator.ResetTrigger("Attack"); animator.SetBool("IsDead", true); }
@@ -370,8 +387,32 @@ public abstract class EnemyAI : MonoBehaviour
     {
         StopAllCoroutines();
         attacking = false;
+        StopOwnedAudio(false);
         if (HasNavigation) { agent.isStopped = true; agent.nextPosition = transform.position; }
         SetWalking(false);
+    }
+    public void PlayActionSound(AudioClip clip)
+    {
+        if (isDead || clip == null || !isActiveAndEnabled) return;
+        if (actionAudio == null)
+        {
+            var child = new GameObject("Enemy Action Audio"); child.transform.SetParent(transform, false);
+            actionAudio = child.AddComponent<AudioSource>();
+            actionAudio.playOnAwake = false; actionAudio.spatialBlend = 1;
+            actionAudio.rolloffMode = AudioRolloffMode.Logarithmic;
+            actionAudio.minDistance = 12; actionAudio.maxDistance = 160; actionAudio.volume = 0.65f;
+        }
+        // Long supplied recordings must not stack on every attack cooldown.
+        if (actionAudio.isPlaying) return;
+        actionAudio.clip = clip; actionAudio.Play();
+    }
+    void StopOwnedAudio(bool mute)
+    {
+        foreach (var source in GetComponentsInChildren<AudioSource>(true))
+        {
+            source.Stop();
+            if (mute) { source.mute = true; source.playOnAwake = false; }
+        }
     }
     static float HorizontalDistance(Vector3 a, Vector3 b)
     {

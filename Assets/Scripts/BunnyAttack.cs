@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using TMPro; // Required for TextMeshProUGUI
 
+[DefaultExecutionOrder(-30)]
 public class BunnyAttack : MonoBehaviour
 {
     public Transform attackPoint;
@@ -20,6 +21,13 @@ public class BunnyAttack : MonoBehaviour
     [FormerlySerializedAs("carrotDamage"), FormerlySerializedAs("bubbleDamage")]
     public int projectileDamage = 25;
     public AudioClip wandAttackSound; // Custom sound effect for carrot wand attack
+    public ParticleSystem castEffect;
+    public Transform wandTip;
+    public bool requiresWandChest;
+    [Tooltip("Drag the held carrot's renderers here. Hidden until the wand is unlocked; the animation rig stays active.")]
+    public Renderer[] wandRenderers;
+    public bool HasWand { get; private set; }
+    public bool IsAiming => isAiming;
 
     [Header("UI Reference")]
     [Tooltip("Drag your TextMeshProUGUI component here (e.g., UI text under BunnyInventory).")]
@@ -47,6 +55,8 @@ public class BunnyAttack : MonoBehaviour
     void Awake()
     {
         CarrotCharges = maxCarrotCharges;
+        HasWand = !requiresWandChest;
+        UpdateWandVisibility();
         health = GetComponent<BunnyHealth>();
         body = GetComponent<CharacterController>();
 
@@ -60,10 +70,14 @@ public class BunnyAttack : MonoBehaviour
 
     void Update()
     {
-        if (Time.timeScale == 0f || (health != null && health.IsDead)) return;
+        if (Time.timeScale == 0f || (health != null && health.IsDead) || Cursor.lockState != CursorLockMode.Locked)
+        {
+            isAiming = false;
+            return;
+        }
 
         // Check if Q key is held down for Aim Stance
-        isAiming = Input.GetKey(aimKey);
+        isAiming = HasWand && Input.GetKey(aimKey);
 
         // Single Left Click Input Handler
         if (Input.GetMouseButtonDown(0))
@@ -93,11 +107,21 @@ public class BunnyAttack : MonoBehaviour
             crosshair.SetActive(visible);
         }
 
-        // Align character body forward vector to camera aim direction
-        if (isAiming && aimCamera != null)
-        {
-            FaceAim();
-        }
+    }
+
+    public void UnlockWand()
+    {
+        HasWand = true;
+        UpdateWandVisibility();
+        CarrotCharges = maxCarrotCharges;
+        UpdateChargesUI();
+    }
+
+    void UpdateWandVisibility()
+    {
+        if (wandRenderers == null) return;
+        foreach (var renderer in wandRenderers)
+            if (renderer != null) renderer.forceRenderingOff = !HasWand;
     }
 
     public bool AddCarrotCharges(int amount)
@@ -117,15 +141,8 @@ public class BunnyAttack : MonoBehaviour
     {
         if (Time.timeScale == 0f || IsAttacking || Time.time < nextAttack || (health != null && health.IsDead)) return false;
 
-        // STANCE GUARDING:
-        // Reject punch (weapon == false) if holding Q aiming key
-        if (!weapon && isAiming) return false;
-
-        // Reject wand attack (weapon == true) if NOT holding Q aiming key
-        if (weapon && !isAiming) return false;
-
         // Check projectile availability for ranged attack
-        if (weapon && (projectilePrefab == null || CarrotCharges <= 0)) return false;
+        if (weapon && (!HasWand || projectilePrefab == null || CarrotCharges <= 0)) return false;
 
         rangedAttack = weapon;
         if (weapon && aimCamera != null) FaceAim();
@@ -151,27 +168,34 @@ public class BunnyAttack : MonoBehaviour
 
     public void PerformAttack()
     {
-        if (!IsAttacking || hitApplied) return;
+        if (!IsAttacking || hitApplied || (health != null && health.IsDead)) return;
         hitApplied = true;
 
         // 1. RANGED CARROT WAND ATTACK (Active when holding Q)
         if (rangedAttack)
         {
             AudioClip soundToPlay = wandAttackSound != null ? wandAttackSound : attackSound;
-            if (soundToPlay != null) AudioSource.PlayClipAtPoint(soundToPlay, transform.position);
+            if (soundToPlay != null) GameAudio.PlayWorld(soundToPlay, transform.position);
 
             CarrotCharges--;
             UpdateChargesUI();
 
             if (aimCamera != null) FaceAim();
             Vector3 launchPoint = body != null ? body.bounds.center : transform.position + Vector3.up;
+            if (wandTip != null) launchPoint = wandTip.position;
             var projectile = Instantiate(projectilePrefab, launchPoint, Quaternion.LookRotation(AimDirection(launchPoint)));
             projectile.Launch(transform, projectileDamage, enemyLayers.value == 0 ? Physics.AllLayers : enemyLayers);
+            if (castEffect != null)
+            {
+                var effect = Instantiate(castEffect, launchPoint, projectile.transform.rotation);
+                effect.Play();
+                Destroy(effect.gameObject, 3f);
+            }
             return;
         }
 
         // 2. MELEE PUNCH ATTACK (Active when Q is released)
-        if (attackSound != null) AudioSource.PlayClipAtPoint(attackSound, transform.position);
+        if (attackSound != null) GameAudio.PlayWorld(attackSound, transform.position);
 
         damaged.Clear();
         int mask = enemyLayers.value == 0 ? Physics.AllLayers : enemyLayers.value;
@@ -202,7 +226,7 @@ public class BunnyAttack : MonoBehaviour
     {
         if (chargesText != null)
         {
-            chargesText.text = prefixText + CarrotCharges.ToString();
+            chargesText.text = HasWand ? prefixText + CarrotCharges + " / " + maxCarrotCharges : "Find the wand chest";
         }
     }
 

@@ -235,8 +235,8 @@ public static class BunnyPopGroundVerification
             "Unlocked gate clears the route before the player enters");
         until = Time.time + 0.85f;
         while (Time.time < until) { step(Vector2.up, false, false); yield return null; }
-        Check(gate.sentry.HasNavigation && gate.sentry.CurrentState == EnemyAI.BehaviourState.Chase,
-            "Crossing the gate activates the sentry and starts a chase");
+        Check(gate.sentry.HasNavigation && (gate.sentry.CurrentState == EnemyAI.BehaviourState.Chase || gate.sentry.CurrentState == EnemyAI.BehaviourState.Attack),
+            "Crossing the gate activates the sentry, which chases or attacks a player already in range");
         gate.sentry.enabled = false;
         gate.sentry.GetComponent<NavMeshAgent>().enabled = false;
         ResetPlayer(bunny, new Vector3(1200, 1000, 1200));
@@ -245,6 +245,7 @@ public static class BunnyPopGroundVerification
         target.transform.position += bunny.controller.bounds.center + Vector3.forward * 25f - body.bounds.center;
         Physics.SyncTransforms();
         var wand = bunny.GetComponent<BunnyAttack>();
+        wand.UnlockWand();
         Check(wand.aimCamera != null && wand.crosshair != null, "Gameplay camera and centered crosshair are assigned");
         var testCamera = new GameObject("Verification shoulder camera").AddComponent<Camera>();
         testCamera.enabled = false;
@@ -258,7 +259,7 @@ public static class BunnyPopGroundVerification
         Check(wand.TryAttack(true), "Wand attack starts");
         yield return new WaitForSeconds(0.85f);
         Check(target.currentHealth == Mathf.Max(0, hp - wand.projectileDamage) && wand.CarrotCharges == charges - 1,
-            "Carrot hits the crosshair target from an offset camera and spends one charge");
+            "Bubble hits the crosshair target from an offset camera and spends one charge");
         var chargePrefab = target.wandChargeDropPrefab;
         target.seedDropPrefab = null;
         target.seedDropChance = 1f;

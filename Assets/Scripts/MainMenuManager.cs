@@ -19,13 +19,21 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Leave Confirmation Panel")]
     public GameObject leaveConfirmPanel;
+    public GameObject settingsPanel;
+    public GameObject howToPlayPanel;
 
     private bool isStartingGame = false;
+    public void OpenSettings() { PlayButtonClickSound(); if (settingsPanel != null) settingsPanel.SetActive(true); }
+    public void CloseSettings() { if (settingsPanel != null) settingsPanel.SetActive(false); }
+    public void OpenInstructions() { PlayButtonClickSound(); if (howToPlayPanel != null) howToPlayPanel.SetActive(true); }
+    public void CloseInstructions() { if (howToPlayPanel != null) howToPlayPanel.SetActive(false); }
 
     void Start()
     {
         // Ensure time is running normally
         Time.timeScale = 1f;
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+        if (howToPlayPanel != null) howToPlayPanel.SetActive(false);
 
         // Ensure panels start hidden
         if (loadingScreenUI != null)
@@ -47,8 +55,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // Unlock cursor for menu interaction
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        GameManager.LockCursor(false);
     }
 
     public void PlayGame()
@@ -61,13 +68,29 @@ public class MainMenuManager : MonoBehaviour
         if (loadingScreenUI != null && loadingVideoPlayer != null)
         {
             loadingScreenUI.SetActive(true);
-            loadingVideoPlayer.Play();
             loadingVideoPlayer.loopPointReached += OnLoadingVideoEnd;
+            loadingVideoPlayer.errorReceived += OnVideoError;
+            loadingVideoPlayer.isLooping = false;
+            loadingVideoPlayer.Play();
+            StartCoroutine(LoadingFallback());
         }
         else
         {
             SceneManager.LoadScene(gameSceneName);
         }
+    }
+
+    IEnumerator LoadingFallback()
+    {
+        yield return new WaitForSecondsRealtime(8f);
+        if (isStartingGame) SceneManager.LoadScene(gameSceneName);
+    }
+    void OnVideoError(VideoPlayer player, string message) { if (isStartingGame) SceneManager.LoadScene(gameSceneName); }
+    void OnDestroy()
+    {
+        if (loadingVideoPlayer == null) return;
+        loadingVideoPlayer.loopPointReached -= OnLoadingVideoEnd;
+        loadingVideoPlayer.errorReceived -= OnVideoError;
     }
 
     private void OnLoadingVideoEnd(VideoPlayer vp)

@@ -29,6 +29,11 @@ public class BunnyInteraction : MonoBehaviour
                 message = "Press E to unlock forest gate";
                 if (Input.GetKeyDown(KeyCode.E) && gate.Unlock(health)) message = "";
             }
+            else if (selected is IWorldInteraction interaction)
+            {
+                message = interaction.Prompt;
+                if (Input.GetKeyDown(KeyCode.E) && interaction.Interact(health)) message = "";
+            }
         }
         if (prompt != null)
         {
@@ -49,6 +54,9 @@ public class BunnyInteraction : MonoBehaviour
             var gate = collider.GetComponentInParent<ForestGate>();
             Component target = seed != null && seed.CanCollect ? seed : null;
             if (target == null && gate != null && !gate.IsUnlocked) target = gate;
+            if (target == null)
+                foreach (var component in collider.GetComponentsInParent<MonoBehaviour>())
+                    if (component is IWorldInteraction interaction && interaction.CanInteract) { target = component; break; }
             if (target == null) continue;
 
             // ClosestPoint only supports primitive and convex colliders.

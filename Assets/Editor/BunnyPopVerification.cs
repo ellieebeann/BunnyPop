@@ -72,6 +72,7 @@ public static class BunnyPopVerification
                     bunny = UnityEngine.Object.FindAnyObjectByType<BunnyController>();
                     health = bunny.GetComponent<BunnyHealth>();
                     attack = bunny.GetComponent<BunnyAttack>();
+                    attack.UnlockWand();
                     Check(attack.attackPoint != null && attack.enemyLayers.value != 0, "Attack scene references assigned");
                     var agents = UnityEngine.Object.FindObjectsByType<EnemyAI>();
                     Check(agents.Length == 11, "All eleven existing enemies retain AI");

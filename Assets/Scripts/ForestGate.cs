@@ -32,7 +32,7 @@ public sealed class ForestGate : MonoBehaviour
         if (openSound != null)
         {
             Vector3 soundPosition = hinge != null ? hinge.position : transform.position;
-            AudioSource.PlayClipAtPoint(openSound, soundPosition, volume);
+            GameAudio.PlayWorld(openSound, soundPosition, volume);
         }
 
         return true;
