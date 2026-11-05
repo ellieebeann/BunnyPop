@@ -5,22 +5,39 @@ public class BunnyController : MonoBehaviour
 {
     public CharacterController controller;
     public Transform cameraTransform;
+
     [Header("Movement (world units)")]
     public float walkSpeed = 14f, sprintSpeed = 26f, crouchSpeed = 7f;
     public float rotationSpeed = 12f, acceleration = 60f;
+
     [Header("Jump")]
     public float jumpHeight = 8f, gravity = -60f;
     public float coyoteTime = 0.12f, jumpBuffer = 0.12f;
     [Range(45f, 85f)] public float steepJumpLimit = 75f;
+
     [Header("Grounding (world units)")]
     public LayerMask groundLayers = ~0;
     public float groundProbeDistance = 0.75f, groundSnapDistance = 1.2f;
     public float groundStickSpeed = 8f, airborneDelay = 0.08f;
     public bool IsGrounded { get; private set; }
+
     [Header("Crouch (local units)")]
     public float standingHeight = 2.69f, crouchingHeight = 1.5f;
     public LayerMask obstructionLayers = ~0;
     public bool IsDead { get; private set; }
+
+    [Header("Audio Settings")]
+    public AudioSource audioSource;
+    public AudioClip[] walkSounds;
+    public AudioClip[] sprintSounds;
+    public AudioClip[] crouchSounds;
+    public AudioClip[] jumpSounds;
+    public AudioClip crouchToggleSound;
+    public float walkStepInterval = 0.45f;
+    public float sprintStepInterval = 0.28f;
+    public float crouchStepInterval = 0.65f;
+    [Range(0f, 1f)] public float soundVolume = 1f;
+
     private Animator animator;
     private BunnyAttack attack;
     private Vector3 planarVelocity, standingCenter;
@@ -30,6 +47,9 @@ public class BunnyController : MonoBehaviour
     private bool jumpInProgress;
     private Vector3 moveSupportNormal;
     private bool steepSupport;
+    private float nextStepTime;
+    private bool previousCrouchState;
+
     private readonly Collider[] clearance = new Collider[32];
     private readonly RaycastHit[] groundHits = new RaycastHit[32];
 
@@ -39,6 +59,12 @@ public class BunnyController : MonoBehaviour
         animator = GetComponent<Animator>();
         attack = GetComponent<BunnyAttack>();
         standingCenter = controller.center;
+
+        if (audioSource == null)
+        {
+            if (!TryGetComponent(out audioSource))
+                audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     void Start()
@@ -61,8 +87,6 @@ public class BunnyController : MonoBehaviour
         Move(acceptInput ? new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) : Vector2.zero,
             acceptInput && Input.GetKey(KeyCode.LeftShift), acceptInput && Input.GetKey(KeyCode.LeftControl),
             acceptInput && Input.GetButtonDown("Jump"));
-
-        // Attack input is now fully handled in BunnyAttack.cs to avoid overlapping attack triggers.
     }
 
     void Move(Vector2 movementInput, bool sprintRequested, bool crouchRequested, bool jumpRequested)
@@ -77,59 +101,124 @@ public class BunnyController : MonoBehaviour
             jumpInProgress = false;
         }
         if (jumpRequested) lastJump = Time.time;
+
         bool wantsCrouch = crouchRequested;
         crouched = wantsCrouch || (crouched && !CanStand());
+
+        // Sound trigger on crouch state change
+        if (crouched != previousCrouchState)
+        {
+            if (crouchToggleSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(crouchToggleSound, soundVolume);
+            }
+            previousCrouchState = crouched;
+        }
+
         float height = Mathf.MoveTowards(controller.height, crouched ? crouchingHeight : standingHeight, 5f * Time.deltaTime);
         if (Mathf.Abs(controller.height - height) > 0.0001f)
         {
             controller.height = height;
             controller.center = standingCenter + Vector3.up * ((height - standingHeight) * 0.5f);
         }
+
         Vector2 input = Vector2.ClampMagnitude(movementInput, 1f);
         float yaw = cameraTransform != null ? cameraTransform.eulerAngles.y : transform.eulerAngles.y;
         Vector3 direction = Quaternion.Euler(0f, yaw, 0f) * new Vector3(input.x, 0f, input.y);
         bool sprinting = !crouched && sprintRequested && input.sqrMagnitude > 0f;
         float speed = crouched ? crouchSpeed : sprinting ? sprintSpeed : walkSpeed;
         planarVelocity = Vector3.MoveTowards(planarVelocity, direction * speed, acceleration * Time.deltaTime);
+
         if (direction.sqrMagnitude > 0.001f && !attack.IsAttacking)
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 1f - Mathf.Exp(-rotationSpeed * Time.deltaTime));
+
         bool jumpFromSteepSlope = !groundedBeforeMove && verticalSpeed <= 0f && steepSupport;
         bool launched = !crouched && (jumpFromSteepSlope || Time.time - lastGrounded <= coyoteTime)
             && Time.time - lastJump <= jumpBuffer;
+
         if (launched)
         {
             verticalSpeed = Mathf.Sqrt(jumpHeight * -2f * gravity);
             lastJump = lastGrounded = float.NegativeInfinity;
             jumpInProgress = true;
+            PlayRandomClip(jumpSounds);
         }
+
         verticalSpeed += gravity * Time.deltaTime;
         Vector3 movement = planarVelocity + Vector3.up * verticalSpeed;
+
         if (groundedBeforeMove && !jumpInProgress)
         {
             Vector3 tangent = Vector3.ProjectOnPlane(planarVelocity, groundNormal);
             movement = tangent.normalized * planarVelocity.magnitude - groundNormal * groundStickSpeed;
         }
+
         moveSupportNormal = Vector3.zero;
         steepSupport = false;
         if (launched && jumpFromSteepSlope) movement = Vector3.up * verticalSpeed;
+
         CollisionFlags flags = controller.Move(movement * Time.deltaTime);
         if ((flags & CollisionFlags.Above) != 0 && verticalSpeed > 0f) verticalSpeed = 0f;
+
         if (groundedBeforeMove && !jumpInProgress && verticalSpeed <= 0f && moveSupportNormal == Vector3.zero
             && ProbeGround(groundSnapDistance, out float gap, out _) && gap > 0.01f)
             controller.Move(Vector3.down * gap);
+
         IsGrounded = verticalSpeed <= 0f
             && (moveSupportNormal != Vector3.zero || ProbeGround(groundProbeDistance, out _, out _));
+
         if (IsGrounded)
         {
             lastGrounded = Time.time;
             jumpInProgress = false;
             verticalSpeed = -groundStickSpeed;
         }
+
+        // Handle footsteps audio logic
+        HandleMovementAudio(IsGrounded && planarVelocity.sqrMagnitude > 0.1f, sprinting);
+
         if (animator == null) return;
         animator.SetBool("IsMoving", planarVelocity.sqrMagnitude > 0.1f);
         animator.SetBool("IsSprinting", sprinting);
         animator.SetBool("IsCrouching", crouched);
         animator.SetBool("IsJumping", jumpInProgress || (!IsGrounded && Time.time - lastGrounded > airborneDelay));
+    }
+
+    private void HandleMovementAudio(bool isMovingOnGround, bool isSprinting)
+    {
+        if (!isMovingOnGround || Time.time < nextStepTime) return;
+
+        AudioClip[] targetClips;
+        float interval;
+
+        if (crouched)
+        {
+            targetClips = crouchSounds;
+            interval = crouchStepInterval;
+        }
+        else if (isSprinting)
+        {
+            targetClips = sprintSounds;
+            interval = sprintStepInterval;
+        }
+        else
+        {
+            targetClips = walkSounds;
+            interval = walkStepInterval;
+        }
+
+        PlayRandomClip(targetClips);
+        nextStepTime = Time.time + Mathf.Max(0.1f, interval);
+    }
+
+    private void PlayRandomClip(AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0 || audioSource == null) return;
+        AudioClip clip = clips[Random.Range(0, clips.Length)];
+        if (clip != null)
+        {
+            audioSource.PlayOneShot(clip, soundVolume);
+        }
     }
 
     bool UseMoveSupport(ref Vector3 normal)

@@ -126,5 +126,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Seed
   seedCount: 0
-  seedSound: {fileID: 0}
+  seedSound: {fileID: 8300000, guid: b71c44c03e728a74f881f8c75680ebcd, type: 3}
   carrotCharges: 2
