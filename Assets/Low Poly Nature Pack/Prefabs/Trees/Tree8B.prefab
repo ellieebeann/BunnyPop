@@ -550,6 +550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7880019137101821900}
   - component: {fileID: 3098876829918118077}
+  - component: {fileID: 2941212744801512247}
   m_Layer: 0
   m_Name: Tree8B
   m_TagString: Untagged
@@ -609,3 +610,26 @@ LODGroup:
     - renderer: {fileID: 6068178739087205058}
   m_Enabled: 1
   m_GlobalIlluminationLOD: 0
+--- !u!136 &2941212744801512247
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7354557459816230262}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.177923
+  m_Height: 14.62242
+  m_Direction: 1
+  m_Center: {x: -0.08526039, y: 7.31121, z: -7.221389}

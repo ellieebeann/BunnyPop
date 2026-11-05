@@ -2,62 +2,53 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
-    [Header("Enemy Stats")]
     public string enemyName = "Enemy";
-    public int maxHealth = 50;
-    public int currentHealth;
-
-    [Header("Audio & Effects")]
-    public AudioClip hitSound;
-    public AudioClip deathSound;
-
+    public int maxHealth = 50, currentHealth;
+    public AudioClip hitSound, deathSound;
+    public float corpseLifetime = 4f;
+    [Header("Optional seed loot (assign a prefab to enable)")]
+    public Seed seedDropPrefab;
+    public Seed wandChargeDropPrefab;
+    public Seed bonusSeedDropPrefab;
+    [Range(0f, 1f)] public float bonusSeedChance = 0.35f;
+    [Range(0f, 1f)] public float seedDropChance = 0.35f;
+    public Seed DroppedSeed { get; private set; }
+    public bool IsDead { get; private set; }
     private Animator animator;
-    private bool isDead = false;
-
-    void Start()
-    {
-        currentHealth = maxHealth;
-        animator = GetComponent<Animator>();
-    }
-
+    void Awake() { currentHealth = maxHealth; animator = GetComponent<Animator>(); }
     public void TakeDamage(int damage)
     {
-        if (isDead) return;
-
-        currentHealth -= damage;
-
-        if (animator != null)
+        if (IsDead || damage <= 0) return;
+        currentHealth = Mathf.Max(0, currentHealth - damage);
+        if (currentHealth > 0)
         {
-            animator.SetTrigger("Hit");
+            var enemyAI = GetComponent<EnemyAI>();
+            if (enemyAI != null) enemyAI.TakeDamage();
+            else if (animator != null) animator.SetTrigger("Hit");
+            if (enemyAI != null) enemyAI.PlayActionSound(hitSound);
+            else if (hitSound != null) GameAudio.PlayWorld(hitSound, transform.position);
+            return;
         }
-
-        if (hitSound != null)
+        IsDead = true;
+        var ai = GetComponent<EnemyAI>();
+        if (ai != null) ai.TriggerDeath();
+        if (animator != null) { animator.ResetTrigger("Hit"); animator.ResetTrigger("Attack"); animator.SetBool("IsDead", true); }
+        foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
+        Seed loot = seedDropPrefab;
+        if (wandChargeDropPrefab != null && (loot == null || Random.value < 0.5f)) loot = wandChargeDropPrefab;
+        if (loot != null && (seedDropChance >= 1f || Random.value < seedDropChance))
         {
-            AudioSource.PlayClipAtPoint(hitSound, transform.position);
+            DroppedSeed = Instantiate(loot, transform.position, Quaternion.identity);
+            DroppedSeed.gameObject.SetActive(true);
+            DroppedSeed.SettleOnGround(transform);
         }
-
-        Debug.Log(enemyName + " took " + damage + " damage. Remaining HP: " + currentHealth);
-
-        if (currentHealth <= 0)
+        if (bonusSeedDropPrefab != null && Random.value < bonusSeedChance)
         {
-            Die();
+            var bonus = Instantiate(bonusSeedDropPrefab, transform.position + Vector3.right * 4, Quaternion.identity);
+            bonus.gameObject.SetActive(true); bonus.SettleOnGround(transform);
         }
-    }
-
-    void Die()
-    {
-        isDead = true;
-
-        if (animator != null)
-        {
-            animator.SetTrigger("Die");
-        }
-
-        if (deathSound != null)
-        {
-            AudioSource.PlayClipAtPoint(deathSound, transform.position);
-        }
-
-        Destroy(gameObject, 0.5f);
+        if (deathSound != null) GameAudio.PlayWorld(deathSound, transform.position);
+        Destroy(gameObject, corpseLifetime);
+        GameManager.instance?.RefreshHUD();
     }
 }
