@@ -78,6 +78,7 @@ public static class BunnyPopGroundVerification
     }
     static IEnumerator Verify()
     {
+        GameManager.instance?.ContinueFromObjectives();
         var bunny = UnityEngine.Object.FindAnyObjectByType<BunnyController>();
         bunny.enabled = false;
         foreach (var ai in UnityEngine.Object.FindObjectsByType<EnemyAI>())

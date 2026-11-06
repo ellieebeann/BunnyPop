@@ -523,7 +523,8 @@ public static class BunnyPopPolishSetup
         var objectives = Overlay(root, "Objectives Panel");
         Board(objectives, "Board", new Vector2(840, 650), Vector2.zero);
         Text(objectives, "Instructions", Instructions, new Vector2(680, 485), new Vector2(0, 30), 20, TextAlignmentOptions.TopLeft);
-        Button(objectives, "Back", "BACK TO GAME", null, new Vector2(300, 54), new Vector2(0, -255), Green, game.ResumeGame, audio);
+        var objectiveAction = Button(objectives, "Back", "Start", null, new Vector2(300, 54), new Vector2(0, -255), Green, game.ContinueFromObjectives, audio);
+        game.objectiveActionText = objectiveAction.GetComponentInChildren<TMP_Text>();
         game.objectivePanel = objectives.gameObject;
         game.settingsPanel = Settings(root, audio, game.CloseSettings).gameObject;
         game.objectivePanel.SetActive(false); game.settingsPanel.SetActive(false);

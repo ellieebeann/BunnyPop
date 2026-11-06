@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Panels & Buttons")]
     public GameObject winPanel, losePanel, pausePanel, pauseButton, objectivePanel, settingsPanel;
     public TMP_Text outcomeText;
+    public TMP_Text objectiveActionText;
     [Header("Audio")]
     public AudioClip winSound, loseSound;
     [Header("Scene Settings")]
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     public static bool WantsCursorLocked { get; private set; }
     public bool HasEnded { get; private set; }
     public bool IsDying { get; private set; }
+    public bool IsAwaitingStart { get; private set; }
     public float TimeRemaining { get; private set; }
     public int EnemiesRemaining { get; private set; }
     public bool CanRestore => seeds >= allSeeds && (!requireAllEnemies || EnemiesRemaining == 0);
@@ -38,8 +40,9 @@ public class GameManager : MonoBehaviour
     {
         if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
-        IsPaused = false;
-        Time.timeScale = 1f;
+        IsAwaitingStart = objectivePanel != null;
+        IsPaused = IsAwaitingStart;
+        Time.timeScale = IsAwaitingStart ? 0f : 1f;
         TimeRemaining = stageDuration;
     }
     void Start()
@@ -47,13 +50,14 @@ public class GameManager : MonoBehaviour
         player = Object.FindAnyObjectByType<BunnyHealth>();
         enemies = Object.FindObjectsByType<EnemyHealth>(FindObjectsInactive.Include);
         Set(winPanel, false); Set(losePanel, false); Set(pausePanel, false);
-        Set(objectivePanel, false); Set(settingsPanel, false); Set(pauseButton, true);
-        LockCursor(true);
+        Set(objectivePanel, IsAwaitingStart); Set(settingsPanel, false); Set(pauseButton, !IsAwaitingStart);
+        SetObjectiveActionLabel(IsAwaitingStart ? "Start" : "Return to game");
+        LockCursor(!IsAwaitingStart);
         RefreshHUD();
     }
     void Update()
     {
-        if (HasEnded || IsDying) return;
+        if (HasEnded || IsDying || IsAwaitingStart) return;
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
         {
             if (IsPaused) ResumeGame(); else PauseGame();
@@ -137,23 +141,35 @@ public class GameManager : MonoBehaviour
     }
     public void PauseGame()
     {
-        if (HasEnded || IsDying) return;
+        if (HasEnded || IsDying || IsAwaitingStart) return;
         IsPaused = true; Time.timeScale = 0;
         Set(pausePanel, true); Set(pauseButton, false); Set(objectivePanel, false); Set(settingsPanel, false);
         LockCursor(false);
     }
     public void ResumeGame()
     {
-        if (HasEnded || IsDying) return;
+        if (HasEnded || IsDying || IsAwaitingStart) return;
         IsPaused = false; Time.timeScale = 1;
         Set(pausePanel, false); Set(objectivePanel, false); Set(settingsPanel, false); Set(pauseButton, true);
         LockCursor(true);
     }
     public void ToggleObjectives()
     {
-        if (HasEnded || IsDying) return;
+        if (HasEnded || IsDying || IsAwaitingStart) return;
         if (objectivePanel != null && objectivePanel.activeSelf) { ResumeGame(); return; }
+        SetObjectiveActionLabel("Return to game");
         PauseGame(); Set(pausePanel, false); Set(objectivePanel, true);
+    }
+    public void ContinueFromObjectives()
+    {
+        if (HasEnded || IsDying) return;
+        IsAwaitingStart = false;
+        SetObjectiveActionLabel("Return to game");
+        ResumeGame();
+    }
+    void SetObjectiveActionLabel(string label)
+    {
+        if (objectiveActionText != null) objectiveActionText.text = label;
     }
     public void OpenSettings() { Set(pausePanel, false); Set(settingsPanel, true); }
     public void CloseSettings() { Set(settingsPanel, false); Set(pausePanel, true); }

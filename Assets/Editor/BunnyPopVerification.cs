@@ -69,6 +69,7 @@ public static class BunnyPopVerification
             switch (stage++)
             {
                 case 0:
+                    GameManager.instance?.ContinueFromObjectives();
                     bunny = UnityEngine.Object.FindAnyObjectByType<BunnyController>();
                     health = bunny.GetComponent<BunnyHealth>();
                     attack = bunny.GetComponent<BunnyAttack>();

@@ -64,3 +64,11 @@ Windows build succeeded with zero build errors. A focused-window check confirmed
 The updated Windows build is `Builds/Latest/BunnyPop.exe`; the previously opened Polished build is a separate older executable. Bubble refill pickups now restore three charges to match the three-hit standard enemy. Original Animator Controllers, model and clip assets remain unchanged. The main-menu scene matches the original ellie version. The current focused suite passed 76 checks; movement passed 31 and enemy behavior passed 49 after the speed changes.
 
 The held carrot starts hidden while the wand chest is locked. Opening the chest equips it, and a new run hides it again. These three states passed Play mode verification.
+
+## Opening Objectives flow - 6 November 2026
+
+Updated from ellie commit 305e25f, preserving its latest UI/video/audio assets. Loading SampleScene directly, choosing Play from MainMenu, or restarting a run opens Objectives with a **Start** button. Gameplay and the full stage timer remain paused until Start is clicked. Escape/P/Tab cannot dismiss the opening panel before Start.
+
+Opening Objectives during an existing run uses **Return to game**, resuming the existing progress and timer. Game Manager / Objective Action Text references the existing button label; its callback is ContinueFromObjectives. The focused Objectives verifier passed 33 checks with zero runtime errors, including actual UI raycast targets for both entry paths and restart. Gameplay regression fixtures explicitly acknowledge the intro before exercising combat or movement.
+
+Release build location for this version: `Builds/Release/BunnyPop.exe`.

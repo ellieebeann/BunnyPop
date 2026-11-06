@@ -74,6 +74,7 @@ public static class BunnyPopEnemyVerification
 
     static IEnumerator Checks()
     {
+        GameManager.instance?.ContinueFromObjectives();
         var bunny = UnityEngine.Object.FindAnyObjectByType<BunnyController>();
         bunny.enabled = false;
         var controller = bunny.GetComponent<CharacterController>();

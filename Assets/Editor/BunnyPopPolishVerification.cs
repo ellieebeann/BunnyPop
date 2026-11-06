@@ -92,6 +92,7 @@ public static class BunnyPopPolishVerification
         for (int i=0; i<180 && SceneManager.GetActiveScene().name != "SampleScene"; i++) yield return null;
         yield return null; yield return null;
         var game = GameManager.instance;
+        game.ContinueFromObjectives(); // Gameplay regressions start after the intro.
         var bunny = Object.FindAnyObjectByType<BunnyController>();
         var health = bunny.GetComponent<BunnyHealth>(); var attack = bunny.GetComponent<BunnyAttack>();
         Check(game != null && !GameManager.IsPaused && Time.timeScale == 1, "Play starts a fresh running game");
@@ -134,7 +135,7 @@ public static class BunnyPopPolishVerification
         Check(!GameManager.IsPaused && Time.timeScale == 1 && GameManager.WantsCursorLocked, "Resume restores gameplay and requests cursor lock");
         game.PauseGame(); Click(game.pausePanel, "Restart");
         yield return null; yield return null; yield return null;
-        game = GameManager.instance; bunny = Object.FindAnyObjectByType<BunnyController>();
+        game = GameManager.instance; game.ContinueFromObjectives(); bunny = Object.FindAnyObjectByType<BunnyController>();
         health = bunny.GetComponent<BunnyHealth>(); attack = bunny.GetComponent<BunnyAttack>();
         Check(!GameManager.IsPaused && Time.timeScale == 1 && GameManager.WantsCursorLocked, "Restart from pause resets static state and requests cursor lock");
         Check(!attack.HasWand && attack.wandRenderers.All(r=>r.forceRenderingOff), "Restart unequips and hides the carrot again");
@@ -222,12 +223,12 @@ public static class BunnyPopPolishVerification
         Check(game.CanRestore && !game.HasEnded && game.objectiveText.text.Contains("altar"), "Clearing enemies points the player back to the altar");
         Check(game.altar.Interact(health) && game.winPanel.activeSelf && game.HasEnded, "Restoring seeds triggers victory"); Capture("victory");
         Click(game.winPanel, "Button"); yield return null; yield return null; yield return null;
-        game=GameManager.instance; health=Object.FindAnyObjectByType<BunnyHealth>();
+        game=GameManager.instance; game.ContinueFromObjectives(); health=Object.FindAnyObjectByType<BunnyHealth>();
         Check(game.seeds==0 && game.TimeRemaining>295 && !GameManager.IsPaused, "Victory restart resets progress");
         health.TakeDamage(int.MaxValue); yield return new WaitForSecondsRealtime(2);
         Check(game.losePanel.activeSelf && game.HasEnded && !GameManager.IsPaused, "Health death finishes its animation before showing Game Over"); Capture("defeat");
         Click(game.losePanel,"Button"); yield return null; yield return null; yield return null;
-        game=GameManager.instance;
+        game=GameManager.instance; game.ContinueFromObjectives();
         typeof(GameManager).GetProperty("TimeRemaining").SetValue(game,0.01f);
         yield return new WaitForSecondsRealtime(0.1f);
         Check(game.HasEnded && game.losePanel.activeSelf, "Timer expiry triggers Game Over");
@@ -254,6 +255,7 @@ public static class BunnyPopPolishVerification
     public static void Build() => BuildTo("Builds/Polished");
     public static void BuildRevision() => BuildTo("Builds/Revised");
     public static void BuildLatest() => BuildTo("Builds/Latest");
+    public static void BuildRelease() => BuildTo("Builds/Release");
     static void BuildTo(string folder)
     {
         Directory.CreateDirectory(folder);
